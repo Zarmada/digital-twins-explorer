@@ -237,10 +237,6 @@ class GraphViewerComponent extends React.Component {
           await this.cyRef.current.doLayout();
           data.twins.forEach(x => allTwins.push(x));
           this.updateProgress();
-
-          if (data.other.length > 0) {
-            this.setState({ couldNotDisplay: true });
-          }
         } else if (data.relationships.length > 0) {
           this.setState({ couldNotDisplay: true, relationshipsOnly: true });
         } else if (data.other.length > 0) {
