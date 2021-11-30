@@ -230,6 +230,7 @@ class GraphViewerComponent extends React.Component {
       if (this.cyRef.current) {
         this.cyRef.current.clearTwins();
       }
+
       await apiService.query(query, async data => {
         if (data.twins.length > 0) {
           this.setState({ couldNotDisplay: false, noResults: false, relationshipsOnly: false });
