@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -5,6 +6,7 @@ import { JsonldGraph } from "jsonld-graph";
 
 import { apiService } from "./ApiService";
 import context from "./ref/context";
+// import iotCentralContext from "./ref/iotCentralContext";
 
 const REL_TARGET_ANY = "*";
 const getModelDisplayName = vertex => vertex.getAttributeValue("dtmi:dtdl:property:displayName;2");
@@ -74,6 +76,11 @@ export class ModelService {
       this.modelGraph = new JsonldGraph([
         { uri: "dtmi:dtdl:context;2", context }
       ]);
+      // this.modelGraph = new JsonldGraph([
+      //   { uri: "dtmi:dtdl:context;2", context }
+      // ], [
+      //   { uri: "dtmi:iotcentral:context;2", iotCentralContext}
+      // ]);
       await this._loadGraph(models.map(x => x.model));
     }
   }
@@ -82,6 +89,11 @@ export class ModelService {
     this.modelGraph = new JsonldGraph([
       { uri: "dtmi:dtdl:context;2", context }
     ]);
+    // this.modelGraph = new JsonldGraph([
+    //   { uri: "dtmi:dtdl:context;2", context }
+    // ], [
+    //   { uri: "dtmi:iotcentral:context;2", iotCentralContext}
+    // ]);
     await this._loadGraph(models);
   }
 
