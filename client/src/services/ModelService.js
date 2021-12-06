@@ -6,7 +6,7 @@ import { JsonldGraph } from "jsonld-graph";
 
 import { apiService } from "./ApiService";
 import context from "./ref/context";
-// import iotCentralContext from "./ref/iotCentralContext";
+import iotCentralContext from "./ref/iotCentralContext";
 
 const REL_TARGET_ANY = "*";
 const getModelDisplayName = vertex => vertex.getAttributeValue("dtmi:dtdl:property:displayName;2");
@@ -74,26 +74,18 @@ export class ModelService {
     if (!this.modelGraph) {
       const models = await apiService.queryModels();
       this.modelGraph = new JsonldGraph([
-        { uri: "dtmi:dtdl:context;2", context }
+        { uri: "dtmi:iotcentral:context;2", context: iotCentralContext},
+        { uri: "dtmi:dtdl:context;2", context: context }  
       ]);
-      // this.modelGraph = new JsonldGraph([
-      //   { uri: "dtmi:dtdl:context;2", context }
-      // ], [
-      //   { uri: "dtmi:iotcentral:context;2", iotCentralContext}
-      // ]);
       await this._loadGraph(models.map(x => x.model));
     }
   }
 
   async initializeWithModels(models) {
     this.modelGraph = new JsonldGraph([
-      { uri: "dtmi:dtdl:context;2", context }
-    ]);
-    // this.modelGraph = new JsonldGraph([
-    //   { uri: "dtmi:dtdl:context;2", context }
-    // ], [
-    //   { uri: "dtmi:iotcentral:context;2", iotCentralContext}
-    // ]);
+      { uri: "dtmi:iotcentral:context;2", context: iotCentralContext},
+      { uri: "dtmi:dtdl:context;2", context: context } 
+    ]);    
     await this._loadGraph(models);
   }
 
