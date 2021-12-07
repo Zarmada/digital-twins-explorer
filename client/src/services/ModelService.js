@@ -1,4 +1,3 @@
-/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -75,7 +74,7 @@ export class ModelService {
       const models = await apiService.queryModels();
       this.modelGraph = new JsonldGraph([
         { uri: "dtmi:iotcentral:context;2", context: iotCentralContext},
-        { uri: "dtmi:dtdl:context;2", context: context }  
+        { uri: "dtmi:dtdl:context;2", context }
       ]);
       await this._loadGraph(models.map(x => x.model));
     }
@@ -83,9 +82,9 @@ export class ModelService {
 
   async initializeWithModels(models) {
     this.modelGraph = new JsonldGraph([
-      { uri: "dtmi:iotcentral:context;2", context: iotCentralContext},
-      { uri: "dtmi:dtdl:context;2", context: context } 
-    ]);    
+      { uri: "dtmi:iotcentral:context;2", context: iotCentralContext },
+      { uri: "dtmi:dtdl:context;2", context }
+    ]);
     await this._loadGraph(models);
   }
 

@@ -57,19 +57,10 @@ export class ImportComponent extends Component {
     await this.cyRef.current.doLayout();
   }
 
-  formatJsonNumberIntoString = data => {
-    for (const twin of data.digitalTwinsGraph.digitalTwins) {
-      if (typeof twin.$dtId === "number") {
-        twin.$dtId = twin.$dtId.toString();
-      }
-    }
-  }
-
   onSaveClicked = async () => {
     this.setState({ isLoading: true });
 
     try {
-      this.formatJsonNumberIntoString(this.data);
       const dataImported = await importService.save(this.data);
       this.setState({ isComplete: true, showImportModal: true, dataImported });
     } catch (exc) {
