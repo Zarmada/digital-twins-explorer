@@ -73,7 +73,7 @@ export class ModelService {
     if (!this.modelGraph) {
       const models = await apiService.queryModels();
       this.modelGraph = new JsonldGraph([
-        { uri: "dtmi:iotcentral:context;2", context: iotCentralContext},
+        { uri: "dtmi:iotcentral:context;2", context: iotCentralContext },
         { uri: "dtmi:dtdl:context;2", context }
       ]);
       await this._loadGraph(models.map(x => x.model));
