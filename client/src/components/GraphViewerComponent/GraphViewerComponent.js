@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -177,7 +178,7 @@ class GraphViewerComponent extends React.Component {
         this.cyRef.current.clearSelection();
       }
       const allTwins = await this.getTwinsData(query, overlayResults);
-      if (!this.state.couldNotDisplay) {
+      if (allTwins.length > 1) {
         await this.getRelationshipsData(allTwins, 30, false, !overlayResults, REL_TYPE_OUTGOING);
         if (selectedNode) {
           const selected = allTwins.find(t => t.$dtId === selectedNode.id);
@@ -238,6 +239,10 @@ class GraphViewerComponent extends React.Component {
           await this.cyRef.current.doLayout();
           data.twins.forEach(x => allTwins.push(x));
           this.updateProgress();
+          
+          if (data.other.length > 0) {
+            this.setState({ couldNotDisplay: true });
+          }
         } else if (data.relationships.length > 0) {
           this.setState({ couldNotDisplay: true, relationshipsOnly: true });
         } else if (data.other.length > 0) {
