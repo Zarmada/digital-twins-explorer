@@ -1,4 +1,3 @@
-/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -239,7 +238,7 @@ class GraphViewerComponent extends React.Component {
           await this.cyRef.current.doLayout();
           data.twins.forEach(x => allTwins.push(x));
           this.updateProgress();
-          
+
           if (data.other.length > 0) {
             this.setState({ couldNotDisplay: true });
           }
