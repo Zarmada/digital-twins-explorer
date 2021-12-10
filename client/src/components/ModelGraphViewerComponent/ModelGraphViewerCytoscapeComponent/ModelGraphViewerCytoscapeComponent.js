@@ -1,4 +1,3 @@
-/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -155,7 +154,6 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
   }
 
   doLayout(progressCallback) {
-
     return new Promise(resolve => {
       const options = ModelGraphViewerCytoscapeLayouts[this.layout];
       const cy = this.graphControl;
@@ -166,13 +164,13 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
 
       const savedLocations = cy.nodes('[id = "dtmi:com:example:adtexplorer:Floor;1"]');
       const notSavedLocations = cy.nodes('[id!= "dtmi:com:example:adtexplorer:Floor;1"]');
-  
-      let savedLocationsOptions = {
-        name: 'preset', 
-        positions: () =>{
-          let position = {x: -213.56739389695883, y: 10.95086831358455 };
-          return position; 
-        }, 
+
+      const savedLocationsOptions = {
+        name: "preset",
+        positions: () => {
+          const position = {x: -213.56739389695883, y: 10.95086831358455 };
+          return position;
+        }
       };
 
 
@@ -196,24 +194,23 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
       });
 
       cy.startBatch();
-      
-      const getLayoutStop = layout => layout.promiseOn('layoutstop');
+
+      const getLayoutStop = layout => layout.promiseOn("layoutstop");
       const runLayout = layout => layout.run();
-      
+
       const layouts = [
         savedLocations.layout(savedLocationsOptions),
         notSavedLocations.layout(options)
       ];
-      
+
       const layoutstops = layouts.map(getLayoutStop);
-      
+
       layouts.forEach(runLayout);
-      
+
       Promise.all(layoutstops).then(() => {
         cy.endBatch();
         resolve();
       });
-
     });
   }
 
