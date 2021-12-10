@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
@@ -154,34 +155,65 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
   }
 
   doLayout(progressCallback) {
-    const cy = this.graphControl;
-    cy.batch(() => {
-      const el = cy.nodes("*");
-      // Add model images
-      for (let i = 0; i < el.length; i++) {
-        const modelId = el[i].data("id");
-        const backgroundImage = this.getBackgroundImage(modelId);
-        if (backgroundImage) {
-          cy.elements(`node[id="${modelId}"]`).style({
-            "background-image": `url(${backgroundImage})`,
-            ...modelWithImageStyle
-          });
-        } else {
-          cy.elements(`node[id="${modelId}"]`).style({
-            ...modelWithImageStyle
-          });
-        }
-      }
-    });
 
     return new Promise(resolve => {
       const options = ModelGraphViewerCytoscapeLayouts[this.layout];
+      const cy = this.graphControl;
+
       if (progressCallback && options.tick) {
         options.tick = progressCallback;
       }
-      const layout = cy.layout(options);
-      layout.on("layoutstop", () => resolve());
-      layout.run();
+
+      const savedLocations = cy.nodes('[id = "dtmi:com:example:adtexplorer:Floor;1"]');
+      const notSavedLocations = cy.nodes('[id!= "dtmi:com:example:adtexplorer:Floor;1"]');
+  
+      let savedLocationsOptions = {
+        name: 'preset', 
+        positions: () =>{
+          let position = {x: -213.56739389695883, y: 10.95086831358455 };
+          return position; 
+        }, 
+      };
+
+
+      cy.batch(() => {
+        const el = cy.nodes("*");
+        // Add model images
+        for (let i = 0; i < el.length; i++) {
+          const modelId = el[i].data("id");
+          const backgroundImage = this.getBackgroundImage(modelId);
+          if (backgroundImage) {
+            cy.elements(`node[id="${modelId}"]`).style({
+              "background-image": `url(${backgroundImage})`,
+              ...modelWithImageStyle
+            });
+          } else {
+            cy.elements(`node[id="${modelId}"]`).style({
+              ...modelWithImageStyle
+            });
+          }
+        }
+      });
+
+      cy.startBatch();
+      
+      const getLayoutStop = layout => layout.promiseOn('layoutstop');
+      const runLayout = layout => layout.run();
+      
+      const layouts = [
+        savedLocations.layout(savedLocationsOptions),
+        notSavedLocations.layout(options)
+      ];
+      
+      const layoutstops = layouts.map(getLayoutStop);
+      
+      layouts.forEach(runLayout);
+      
+      Promise.all(layoutstops).then(() => {
+        cy.endBatch();
+        resolve();
+      });
+
     });
   }
 
