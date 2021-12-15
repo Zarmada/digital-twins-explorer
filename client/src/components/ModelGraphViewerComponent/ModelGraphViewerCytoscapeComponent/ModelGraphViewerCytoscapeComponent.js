@@ -7,6 +7,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import { graphStyles, modelWithImageStyle, minZoomShowLabels, ellipsisMaxTextLength, ellipsisMaxTextLengthWithImage } from "./config";
 import { colors, dagreOptions, colaOptions, klayOptions, fcoseOptions, d3ForceOptions, navigationOptions } from "../../../config/CytoscapeConfig";
 import { settingsService } from "../../../services/SettingsService";
+import { storageService } from "../../../services/StorageService";
 import { addNavigator } from "../../../utils/utilities";
 
 import "./ModelGraphViewerCytoscapeComponent.scss";
@@ -154,34 +155,62 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
   }
 
   doLayout(progressCallback) {
-    const cy = this.graphControl;
-    cy.batch(() => {
-      const el = cy.nodes("*");
-      // Add model images
-      for (let i = 0; i < el.length; i++) {
-        const modelId = el[i].data("id");
-        const backgroundImage = this.getBackgroundImage(modelId);
-        if (backgroundImage) {
-          cy.elements(`node[id="${modelId}"]`).style({
-            "background-image": `url(${backgroundImage})`,
-            ...modelWithImageStyle
-          });
-        } else {
-          cy.elements(`node[id="${modelId}"]`).style({
-            ...modelWithImageStyle
-          });
-        }
-      }
-    });
-
     return new Promise(resolve => {
       const options = ModelGraphViewerCytoscapeLayouts[this.layout];
+      const cy = this.graphControl;
+
       if (progressCallback && options.tick) {
         options.tick = progressCallback;
       }
-      const layout = cy.layout(options);
-      layout.on("layoutstop", () => resolve());
-      layout.run();
+
+      cy.batch(() => {
+        const el = cy.nodes("*");
+        // Add model images
+        for (let i = 0; i < el.length; i++) {
+          const modelId = el[i].data("id");
+          const backgroundImage = this.getBackgroundImage(modelId);
+          if (backgroundImage) {
+            cy.elements(`node[id="${modelId}"]`).style({
+              "background-image": `url(${backgroundImage})`,
+              ...modelWithImageStyle
+            });
+          } else {
+            cy.elements(`node[id="${modelId}"]`).style({
+              ...modelWithImageStyle
+            });
+          }
+        }
+      });
+
+      cy.startBatch();
+
+      const layouts = [];
+      const storagedPositions = storageService.getModelViewerNodesPositions();
+      for (const [ key, value ] of Object.entries(storagedPositions)) {
+        const savedLocation = cy.nodes(`[id = "${key}"]`);
+        const nodeLocationsOptions = {
+          name: "preset",
+          positions: () => value
+        };
+        layouts.push(savedLocation.layout(nodeLocationsOptions));
+      }
+
+      const notSavedNodes = cy.nodes().filter(n => !Object.keys(storagedPositions).includes(n.id()));
+      layouts.push(notSavedNodes.layout(options));
+
+      const getLayoutStop = layout => layout.promiseOn("layoutstop");
+      const runLayout = layout => layout.run();
+      const layoutstops = layouts.map(getLayoutStop);
+
+      layouts.forEach(runLayout);
+
+      Promise.all(layoutstops).then(() => {
+        cy.endBatch();
+        cy.on("dragfree", "node", evt => {
+          storageService.saveModelViewerNodesPosition(evt.target.id(), evt.target.position("x"), evt.target.position("y"));
+        });
+        resolve();
+      });
     });
   }
 
