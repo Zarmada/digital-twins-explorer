@@ -7,6 +7,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import { graphStyles, modelWithImageStyle, minZoomShowLabels, ellipsisMaxTextLength, ellipsisMaxTextLengthWithImage } from "./config";
 import { colors, dagreOptions, colaOptions, klayOptions, fcoseOptions, d3ForceOptions, navigationOptions } from "../../../config/CytoscapeConfig";
 import { settingsService } from "../../../services/SettingsService";
+import { storageService } from "../../../services/StorageService";
 import { addNavigator } from "../../../utils/utilities";
 
 import "./ModelGraphViewerCytoscapeComponent.scss";
@@ -162,18 +163,6 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
         options.tick = progressCallback;
       }
 
-      const savedLocations = cy.nodes('[id = "dtmi:com:example:adtexplorer:Floor;1"]');
-      const notSavedLocations = cy.nodes('[id!= "dtmi:com:example:adtexplorer:Floor;1"]');
-
-      const savedLocationsOptions = {
-        name: "preset",
-        positions: () => {
-          const position = {x: -213.56739389695883, y: 10.95086831358455 };
-          return position;
-        }
-      };
-
-
       cy.batch(() => {
         const el = cy.nodes("*");
         // Add model images
@@ -195,20 +184,31 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
 
       cy.startBatch();
 
+      const layouts = [];
+      const storagedPositions = storageService.getGraphViewNodesPositions();
+      for (const [ key, value ] of Object.entries(storagedPositions)) {
+        const savedLocation = cy.nodes(`[id = "${key}"]`);
+        const nodeLocationsOptions = {
+          name: "preset",
+          positions: () => value
+        };
+        layouts.push(savedLocation.layout(nodeLocationsOptions));
+      }
+
+      const notSavedNodes = cy.nodes().filter(n => !Object.keys(storagedPositions).includes(n.id()));
+      layouts.push(notSavedNodes.layout(options));
+
       const getLayoutStop = layout => layout.promiseOn("layoutstop");
       const runLayout = layout => layout.run();
-
-      const layouts = [
-        savedLocations.layout(savedLocationsOptions),
-        notSavedLocations.layout(options)
-      ];
-
       const layoutstops = layouts.map(getLayoutStop);
 
       layouts.forEach(runLayout);
 
       Promise.all(layoutstops).then(() => {
         cy.endBatch();
+        cy.on("dragfree", "node", evt => {
+          storageService.saveGraphViewNodePosition(evt.target.id(), evt.target.position("x"), evt.target.position("y"));
+        });
         resolve();
       });
     });

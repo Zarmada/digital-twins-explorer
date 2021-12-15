@@ -10,6 +10,8 @@ import _uniqueId from "lodash/uniqueId";
 import { colors, graphStyles, dagreOptions, colaOptions, klayOptions, fcoseOptions, modelWithImageStyle, navigationOptions } from "./config";
 import { getUniqueRelationshipId, addNavigator } from "../../../utils/utilities";
 import { settingsService } from "../../../services/SettingsService";
+import { storageService } from "../../../services/StorageService";
+import { eventService } from "../../../services/EventService";
 
 import "./GraphViewerCytoscapeComponent.scss";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
@@ -174,6 +176,7 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         hasTrailingDivider: true
       }
     ];
+    this.query = "";
   }
 
   componentDidMount() {
@@ -208,6 +211,10 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     };
     window.addEventListener("keydown", e => {
       handleKeyDown(e);
+    });
+
+    eventService.subscribeQuery(query => {
+      this.query = query;
     });
   }
 
@@ -494,10 +501,35 @@ export class GraphViewerCytoscapeComponent extends React.Component {
       }
     });
 
-    return new Promise(resolve => {
-      const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
-      layout.on("layoutstop", () => resolve());
+    cy.startBatch();
+
+    const layouts = [];
+    const currentNodesPositions = storageService.getModelViewNodesPositionsForQuery(this.query);
+    for (const [ key, value ] of Object.entries(currentNodesPositions)) {
+      const savedLocation = cy.nodes(`[id = "${key}"]`);
+      const nodeLocationsOptions = {
+        name: "preset",
+        positions: () => value
+      };
+      layouts.push(savedLocation.layout(nodeLocationsOptions));
+    }
+
+    const options = GraphViewerCytoscapeLayouts[this.layout];
+    const notSavedNodes = cy.nodes().filter(n => !Object.keys(currentNodesPositions).includes(n.id()));
+    layouts.push(notSavedNodes.layout(options));
+
+    const getLayoutStop = layout => layout.promiseOn("layoutstop");
+    const runLayout = layout => {
       layout.run();
+    };
+    const layoutstops = layouts.map(getLayoutStop);
+    layouts.forEach(runLayout);
+
+    return new Promise(resolve => {
+      Promise.all(layoutstops).then(() => {
+        cy.endBatch();
+        resolve();
+      });
     });
   }
 
@@ -999,6 +1031,9 @@ export class GraphViewerCytoscapeComponent extends React.Component {
           maxZoom={2}
           cy={cy => {
             if (this.graphControl !== cy) {
+              cy.on("dragfree", "node", evt => {
+                storageService.saveModelViewNodePosition(this.query, evt.target.id(), evt.target.position("x"), evt.target.position("y"));
+              });
               this.graphControl = cy;
               addNavigator(this.graphControl, navigationOptions, `#${this.navControlId}`);
               if (this.props.readOnly) {
