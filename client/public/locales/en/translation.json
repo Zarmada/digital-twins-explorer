@@ -83,7 +83,9 @@
                 "text": "Show all relationships",
                 "ariaLabel": "show all relationships"
             },
-            "showTwins": "Show all"
+            "showTwins": "Show all",
+            "saveLayout": "Save Layout",
+            "resetLayout": "Reset Layout"
         },
         "expansionLevelItems": {
             "ariaLabel": "Select number of layers to expand",

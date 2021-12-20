@@ -494,6 +494,14 @@ class GraphViewerComponent extends React.Component {
     this.cyRef.current.doLayout();
   }
 
+  onSaveLayoutClicked = () => this.cyRef.current.saveLayout();
+
+  onClearLayoutClicked = async () => {
+    this.cyRef.current.clearLayout();
+    await this.cyRef.current.doLayout(this.progressCallback);
+    this.cyRef.current.showClearLayoutMessage();
+  }
+
   onTriggerHide = () => {
     const { selectedNodes, hideMode } = this.state;
     if (selectedNodes && selectedNodes.length > 0) {
@@ -763,6 +771,8 @@ class GraphViewerComponent extends React.Component {
           onZoomToFitClicked={() => this.cyRef.current.zoomToFit()}
           onCenterClicked={() => this.cyRef.current.center()}
           onLayoutChanged={this.onLayoutChanged}
+          onSaveLayoutClicked={this.onSaveLayoutClicked}
+          onClearLayoutClicked={this.onClearLayoutClicked}
           onGetCurrentNodes={() => this.cyRef.current.graphControl.nodes()}
           setSelectedDisplayNameProperty={this.props.setSelectedDisplayNameProperty}
           selectedDisplayNameProperty={this.props.selectedDisplayNameProperty}

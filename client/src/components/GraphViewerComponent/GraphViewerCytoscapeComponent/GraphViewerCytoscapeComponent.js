@@ -10,9 +10,15 @@ import _uniqueId from "lodash/uniqueId";
 import { colors, graphStyles, dagreOptions, colaOptions, klayOptions, fcoseOptions, modelWithImageStyle, navigationOptions } from "./config";
 import { getUniqueRelationshipId, addNavigator } from "../../../utils/utilities";
 import { settingsService } from "../../../services/SettingsService";
+import { sessionService } from "../../../services/SessionService";
+import { storageService } from "../../../services/StorageService";
+import { print } from "../../../services/LoggingService";
 
 import "./GraphViewerCytoscapeComponent.scss";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
+import ModalComponent from "../../ModalComponent/ModalComponent";
+import { DefaultButton } from "office-ui-fabric-react";
+import { eventService } from "../../../services/EventService";
 
 export const GraphViewerCytoscapeLayouts = {
   "Cola": colaOptions,
@@ -174,6 +180,7 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         hasTrailingDivider: true
       }
     ];
+    this.query = "";
   }
 
   componentDidMount() {
@@ -208,6 +215,10 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     };
     window.addEventListener("keydown", e => {
       handleKeyDown(e);
+    });
+
+    eventService.subscribeQuery(query => {
+      this.query = query;
     });
   }
 
@@ -474,7 +485,25 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     });
   }
 
+  saveLayout() {
+    storageService.saveGraphLayoutPositions(this.layout, this.query, sessionService.getCurrentGraphLayoutPositions(this.layout, this.query));
+    const msg = `${this.layout} layout saved`;
+    print(msg);
+    this.setState({ notificationMessageIsVisible: true, notificationMessage: msg });
+  }
+
+  clearLayout() {
+    sessionService.clearGraphLayout(this.layout, this.query);
+    storageService.clearGraphLayout(this.layout, this.query);
+  }
+
   doLayout() {
+    const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, this.query);
+    if (!currentLayoutPositions) {
+      const storagedPositions = storageService.getGraphLayoutPositionsByQuery(this.layout, this.query);
+      sessionService.setInitialGraphLayoutPositions(this.layout, this.query, storagedPositions);
+    }
+
     const cy = this.graphControl;
     cy.batch(() => {
       const types = {};
@@ -1018,40 +1047,58 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     this.setContextMenuState(nodeId);
   }
 
-  render() {
-    const { hideContextMenu } = this.state;
-    return (
-      <div className="cytoscape-wrap">
-        <CytoscapeComponent elements={[]}
-          className={`graph-control ${hideContextMenu ? "hide-context" : ""}`}
-          stylesheet={graphStyles}
-          maxZoom={2}
-          cy={cy => {
-            if (this.graphControl !== cy) {
-              this.graphControl = cy;
-              addNavigator(this.graphControl, navigationOptions, `#${this.navControlId}`);
-              if (this.props.readOnly) {
-                return;
-              }
+  onCloseModal = () => {
+    this.setState({ notificationMessageIsVisible: false, notificationMessage: "" });
+  }
 
-              this.graphControl.dblclick();
-              this.graphControl.on("mouseover", this.onNodeHover);
-              this.graphControl.on("select", "node", this.onNodeSelected);
-              this.graphControl.on("unselect", "node", this.onNodeUnselected);
-              this.graphControl.on("select", "edge", this.onEdgeSelected);
-              this.graphControl.on("click", this.onControlClicked);
-              this.graphControl.on("dblclick", this.onControlDoubleClicked);
-              this.graphControl.on("dblclick", "node", this.onNodeDoubleClicked);
-              this.graphControl.on("cxttap", "node", this.onNodeRightClick);
-              this.graphControl.on("cxttap", this.onControlRightClick);
-              this.graphControl.on("mouseout", this.onNodeUnhover);
-              this.graphControl.on("mousedown", this.onNodeUnhover);
-            }
-          }} />
-        <div className="navigator-container">
-          <div id={this.navControlId} className="graph-navigator" role="presentation" />
+  render() {
+    const { hideContextMenu, notificationMessageIsVisible, notificationMessage } = this.state;
+    return (
+      <>
+        <div className="cytoscape-wrap">
+          <CytoscapeComponent elements={[]}
+            className={`graph-control ${hideContextMenu ? "hide-context" : ""}`}
+            stylesheet={graphStyles}
+            maxZoom={2}
+            cy={cy => {
+              if (this.graphControl !== cy) {
+                cy.on("dragfree", "node", evt => {
+                  sessionService.saveGraphLayoutNodesPosition(this.layout, this.query, evt.target.id(), evt.target.position("x"), evt.target.position("y"));
+                });
+                this.graphControl = cy;
+                addNavigator(this.graphControl, navigationOptions, `#${this.navControlId}`);
+                if (this.props.readOnly) {
+                  return;
+                }
+
+                this.graphControl.dblclick();
+                this.graphControl.on("mouseover", this.onNodeHover);
+                this.graphControl.on("select", "node", this.onNodeSelected);
+                this.graphControl.on("unselect", "node", this.onNodeUnselected);
+                this.graphControl.on("select", "edge", this.onEdgeSelected);
+                this.graphControl.on("click", this.onControlClicked);
+                this.graphControl.on("dblclick", this.onControlDoubleClicked);
+                this.graphControl.on("dblclick", "node", this.onNodeDoubleClicked);
+                this.graphControl.on("cxttap", "node", this.onNodeRightClick);
+                this.graphControl.on("cxttap", this.onControlRightClick);
+                this.graphControl.on("mouseout", this.onNodeUnhover);
+                this.graphControl.on("mousedown", this.onNodeUnhover);
+              }
+            }} />
+          <div className="navigator-container">
+            <div id={this.navControlId} className="graph-navigator" role="presentation" />
+          </div>
         </div>
-      </div>
+        <ModalComponent isVisible={notificationMessageIsVisible} className="pi-patch-modal">
+          <h2 className="heading-2">Layout Information</h2>
+          <div className="patch-json-data">
+            {notificationMessage}
+          </div>
+          <div className="btn-group">
+            <DefaultButton className="modal-button close-button" onClick={this.onCloseModal}>Close</DefaultButton>
+          </div>
+        </ModalComponent>
+      </>
     );
   }
 
