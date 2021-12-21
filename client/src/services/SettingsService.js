@@ -14,7 +14,7 @@ class SettingsService {
   constructor() {
     this.settings = storageService.getLocalStorageObject(StorageKeyName)
       || { caching: false, eagerLoading: false, queries: [], relTypeLoading: REL_TYPE_OUTGOING, relExpansionLevel: 1, contrast: "normal",
-        possibleDisplayNameProperties: [], selectedDisplayNameProperty: {} };
+        possibleDisplayNameProperties: [], selectedDisplayNameProperty: {}, enableCustomLayouts: false };
   }
 
   get selectedDisplayNameProperty() {
@@ -81,6 +81,15 @@ class SettingsService {
 
   set contrast(contrast) {
     this.settings.contrast = contrast;
+    this.save();
+  }
+
+  get enableCustomLayouts() {
+    return this.settings.enableCustomLayouts || false;
+  }
+
+  set enableCustomLayouts(enableCustomLayouts) {
+    this.settings.enableCustomLayouts = enableCustomLayouts;
     this.save();
   }
 

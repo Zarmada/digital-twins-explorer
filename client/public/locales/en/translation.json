@@ -258,7 +258,8 @@
         "heading3": "Display Settings",
         "eagerLoadingField": "Eager Loading",
         "cachingField": "Caching",
-        "highContrastField": "High Contrast"
+        "highContrastField": "High Contrast",
+        "enableCustomLayouts": "Enable custom layouts"
     },
     "propertyInspectorComponent": {
         "jsonEditorEmptyValue": "Unset",

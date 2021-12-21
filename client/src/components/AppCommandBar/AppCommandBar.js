@@ -91,10 +91,12 @@ class AppCommandBar extends Component {
           className="app-commandbar" />
         <ConfigurationFormComponent t={this.props.t} ref={this.configure} />
         <PreferencesFormComponent ref={this.preferences}
+          toggleEnableCustomLayouts={this.props.toggleEnableCustomLayouts}
           toggleHighContrastMode={this.props.toggleHighContrastMode}
           toggleOptionalComponent={this.props.toggleOptionalComponent}
           optionalComponentsState={this.props.optionalComponentsState}
           contrast={this.props.contrast}
+          enableCustomLayouts={this.props.enableCustomLayouts}
           t={this.props.t} />
         <DeleteAllTwinsComponent ref={this.delete} t={this.props.t} />
         <KeyboardShortcutsComponents ref={this.keyboard} t={this.props.t} />

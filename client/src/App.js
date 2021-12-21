@@ -111,7 +111,8 @@ class App extends Component {
       leftPanelSelectedKey: "models",
       contrast: contrastOptions.normal,
       possibleDisplayNameProperties: [],
-      selectedDisplayNameProperty: ""
+      selectedDisplayNameProperty: "",
+      enableCustomLayouts: false
     };
     for (const x of this.optionalComponents) {
       this.state[x.id] = { visible: false };
@@ -172,6 +173,7 @@ class App extends Component {
       }
     });
     this.applyStoredContrast();
+    this.applyEnableCustomLayouts();
     await this.setPossibleDisplayNameProperties();
     await this.applyStoredDisplayNameProperty();
   }
@@ -182,6 +184,11 @@ class App extends Component {
       this.setState({ contrast },
         () => this.setCurrentContrast());
     }
+  }
+
+  applyEnableCustomLayouts = () => {
+    const enableCustomLayouts = settingsService.enableCustomLayouts;
+    this.setState({ enableCustomLayouts });
   }
 
   applyStoredDisplayNameProperty = () => {
@@ -372,6 +379,12 @@ class App extends Component {
       () => this.setCurrentContrast());
   }
 
+  toggleEnableCustomLayouts = enableCustomLayouts => {
+    console.log("toggleEnableCustomLayouts in App", enableCustomLayouts);
+    settingsService.enableCustomLayouts = enableCustomLayouts;
+    this.setState({enableCustomLayouts});
+  }
+
   renderClosablePivotItem = item => (
     <div>
       <span>{item.headerText}</span>
@@ -392,7 +405,7 @@ class App extends Component {
   }
 
   render() {
-    const { isLoading, layout, mainContentSelectedKey, leftPanelSelectedKey, contrast, selectedDisplayNameProperty, possibleDisplayNameProperties } = this.state;
+    const { isLoading, layout, mainContentSelectedKey, leftPanelSelectedKey, contrast, selectedDisplayNameProperty, possibleDisplayNameProperties, enableCustomLayouts } = this.state;
     const optionalComponentsState = this.optionalComponents.map(p => {
       p.show = layout[p.showProp];
       return p;
@@ -411,7 +424,9 @@ class App extends Component {
                   optionalComponentsState={optionalComponentsState}
                   toggleOptionalComponent={this.toggleOptionalComponent}
                   toggleHighContrastMode={this.toggleHighContrastMode}
-                  contrast={contrast} />
+                  toggleEnableCustomLayouts={this.toggleEnableCustomLayouts}
+                  contrast={contrast}
+                  enableCustomLayouts={enableCustomLayouts} />
               </Stack>
             </div>
             <Stack className="work-area">
