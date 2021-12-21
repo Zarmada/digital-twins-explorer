@@ -222,7 +222,9 @@ export class GraphViewerCytoscapeComponent extends React.Component {
           }
           twin.data("label", label ?? `*${twin.data().id}`);
         });
-        this.props.setIsDisplayNameAsteriskPresent(isDisplayNameAsteriskPresent);
+        if (this.props.setIsDisplayNameAsteriskPresent) {
+          this.props.setIsDisplayNameAsteriskPresent(isDisplayNameAsteriskPresent);
+        }
       }
     }
   }
@@ -251,7 +253,10 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         });
       });
 
-    this.props.setIsDisplayNameAsteriskPresent(isDisplayNameAsteriskPresent);
+    if (this.props.setIsDisplayNameAsteriskPresent) {
+      this.props.setIsDisplayNameAsteriskPresent(isDisplayNameAsteriskPresent);
+    }
+
     this.graphControl.add(mapped);
   }
 
