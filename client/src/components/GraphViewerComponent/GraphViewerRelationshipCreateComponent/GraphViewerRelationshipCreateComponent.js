@@ -128,11 +128,9 @@ export class GraphViewerRelationshipCreateComponent extends Component {
       const { selectedNode, selectedNodes } = this.props;
       const source = selectedNodes.find(x => x.id !== selectedNode.id);
       const target = selectedNode;
-      this.setState({ sourceId: source.id });
-      this.setState({ targetId: target.id });
+      this.setState({ sourceId: source.id, targetId: target.id });
       const relationshipItems = await new ModelService().getRelationships(source.modelId, target.modelId);
-      this.setState({ hasRelationships: relationshipItems.length > 0 });
-      this.setState({ relationshipItems });
+      this.setState({ hasRelationships: relationshipItems.length > 0, relationshipItems });
     } catch (exc) {
       this.setState({ relationshipItems: [] });
       exc.customMessage = `Error in retrieving model. Requested ${sourceModelId}`;
@@ -154,11 +152,9 @@ export class GraphViewerRelationshipCreateComponent extends Component {
         source = selectedNode;
         target = selectedNodes.find(x => x.id !== selectedNode.id);
       }
-      this.setState({ sourceId: source.id });
-      this.setState({ targetId: target.id });
+      this.setState({ sourceId: source.id, targetId: target.id });
       const relationshipItems = await new ModelService().getRelationships(source.modelId, target.modelId);
-      this.setState({ hasRelationships: relationshipItems.length > 0 });
-      this.setState({ relationshipItems });
+      this.setState({ hasRelationships: relationshipItems.length > 0, relationshipItems });
     } catch (exc) {
       this.setState({ relationshipItems: [] });
       exc.customMessage = `Error in retrieving model. Requested ${sourceModelId}`;
