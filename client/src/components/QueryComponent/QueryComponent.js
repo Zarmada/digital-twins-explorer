@@ -35,13 +35,38 @@ class QueryComponent extends Component {
       showConfirmDeleteModal: false,
       showConfirmOverwriteModal: false,
       newQueryName: "",
-      isOverlayResultsChecked: false
+      isOverlayResultsChecked: false,
+      multiline: false,
+      multilineHolder: false,
+      shiftPressed: false
     };
   }
 
   componentDidMount() {
     this.setState({ queries: settingsService.queries });
     eventService.subscribeEnvironmentChange(this.clearAfterEnvironmentChange);
+    document.addEventListener("keyup", this.upFunction, false);
+    document.addEventListener("keydown", this.downFunction, false);
+    document.addEventListener("click", this.onFocusLost, false);
+  }
+
+  upFunction = event => {
+    const shiftPressed = event.keyCode === 16;
+    const enterPressed = event.keyCode === 13;
+    if (this.state.shiftPressed) {
+      if (enterPressed) {
+        this.setState({ multiline: true, multilineHolder: true});
+        this.queryField.focus();
+      }
+    }
+    this.setState({ shiftPressed });
+  }
+
+  downFunction = event => {
+    const shiftPressed = event.keyCode === 16;
+    if (shiftPressed) {
+      this.setState({ shiftPressed });
+    }
   }
 
   componentWillUnmount() {
@@ -63,6 +88,16 @@ class QueryComponent extends Component {
 
   onChange = evt => {
     this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
+  }
+
+  onFocusGained = () => {
+    if (this.state.multilineHolder) {
+      this.setState({ multiline: true });
+    }
+  }
+
+  onFocusLost = () => {
+    this.setState({ multiline: false });
   }
 
   onChangeQueryName = evt => {
@@ -191,7 +226,10 @@ class QueryComponent extends Component {
             </div>
             <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
               <form onSubmit={this.executeQuery}>
-                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query" />
+                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onFocus={this.onFocusGained} onMouseLeave={this.onFocusLost} multiline={this.state.multiline} ref={input => {
+                    this.queryField = input;
+                  }} />
               </form>
             </FocusZone>
             <div className="qc-queryControls">
