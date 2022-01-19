@@ -49,12 +49,10 @@ class QueryComponent extends Component {
   }
 
   upFunction = event => {
-    const enterPressed = event.keyCode === 13;
-    if (event.shiftKey) {
-      if (enterPressed) {
-        this.setState({ multiline: true, multilineHolder: true});
-        this.queryField.focus();
-      }
+    const enterPressed = event.key === "Enter";
+    if (event.shiftKey && enterPressed) {
+      this.setState({ multiline: true, multilineHolder: true });
+      this.queryField.focus();
     }
   }
 
@@ -216,7 +214,7 @@ class QueryComponent extends Component {
             <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
               <form onSubmit={this.executeQuery}>
                 <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
-                  onFocus={this.onFocusGained} onMouseLeave={this.onFocusLost} multiline={this.state.multiline} ref={input => {
+                  onFocus={this.onFocusGained} multiline={this.state.multiline} ref={input => {
                     this.queryField = input;
                   }} />
               </form>
