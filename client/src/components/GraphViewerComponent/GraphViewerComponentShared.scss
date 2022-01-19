@@ -41,4 +41,22 @@
       margin-right: 0;
     }
   }
+  .btn-icon {
+    float: right;
+  }
+  .warning-icon-wrapper {
+    background-color: red;
+    height: 60px;
+  }
+  .warning-icon {
+    float: left;
+    margin-top: 15px
+  }
+  .warning-text {
+    float: right;
+    background-color: var(--background-color2);
+    margin: 1px;
+    width: 200px;
+    height: 95%
+  }
 }
