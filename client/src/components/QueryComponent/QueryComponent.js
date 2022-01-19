@@ -37,8 +37,7 @@ class QueryComponent extends Component {
       newQueryName: "",
       isOverlayResultsChecked: false,
       multiline: false,
-      multilineHolder: false,
-      shiftPressed: false
+      multilineHolder: false
     };
   }
 
@@ -46,26 +45,16 @@ class QueryComponent extends Component {
     this.setState({ queries: settingsService.queries });
     eventService.subscribeEnvironmentChange(this.clearAfterEnvironmentChange);
     document.addEventListener("keyup", this.upFunction, false);
-    document.addEventListener("keydown", this.downFunction, false);
     document.addEventListener("click", this.onFocusLost, false);
   }
 
   upFunction = event => {
-    const shiftPressed = event.keyCode === 16;
     const enterPressed = event.keyCode === 13;
-    if (this.state.shiftPressed) {
+    if (event.shiftKey) {
       if (enterPressed) {
         this.setState({ multiline: true, multilineHolder: true});
         this.queryField.focus();
       }
-    }
-    this.setState({ shiftPressed });
-  }
-
-  downFunction = event => {
-    const shiftPressed = event.keyCode === 16;
-    if (shiftPressed) {
-      this.setState({ shiftPressed });
     }
   }
 
