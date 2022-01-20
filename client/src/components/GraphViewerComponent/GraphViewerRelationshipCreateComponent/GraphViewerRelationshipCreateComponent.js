@@ -57,16 +57,6 @@ export class GraphViewerRelationshipCreateComponent extends Component {
     };
   }
 
-  swapRelationshipIcon =
-  {
-    iconName: swapIconName
-  }
-
-  warningRelationshipIcon =
-  {
-    iconName: warningIconName
-  }
-
   onSelectedRelChange = (e, i) => {
     this.setState({ relationshipId: i.key, hasRequiredRelError: false });
   }
@@ -154,7 +144,7 @@ export class GraphViewerRelationshipCreateComponent extends Component {
         <h4>Source ID</h4>
         <TextField disabled readOnly id="sourceIdField" ariaLabel="Source ID" className="modal-input" styles={this.getStyles} value={sourceId} />
         <div className="btn-icon">
-          <IconButton iconOnly="true" iconProps={this.swapRelationshipIcon} title="Swap Relationship" ariaLabel="Swap Relationship" onClick={this.swap} />
+          <IconButton iconOnly="true" iconProps={{ iconName: swapIconName }} title="Swap Relationship" ariaLabel="Swap Relationship" onClick={this.swap} />
         </div>
         <h4>Target ID</h4>
         <TextField disabled readOnly id="targetIdField" ariaLabel="Target ID" className="modal-input" styles={this.getStyles} value={targetId} />
@@ -177,7 +167,7 @@ export class GraphViewerRelationshipCreateComponent extends Component {
         } {
           !hasRelationships && <div className="warning-icon-wrapper">
             <div className="warning-icon">
-              <IconButton iconOnly="true" iconProps={this.warningRelationshipIcon} title="Warning Relationship" ariaLabel="Warning  Relationship" />
+              <IconButton iconOnly="true" iconProps={{ iconName: warningIconName }} title="Warning Relationship" ariaLabel="Warning  Relationship" />
             </div>
             <div className="warning-text">
               <Label>No relationship available, try swapping source and target</Label>
