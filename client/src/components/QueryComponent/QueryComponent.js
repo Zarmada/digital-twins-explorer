@@ -13,10 +13,12 @@ import { settingsService } from "../../services/SettingsService";
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
 import { ConfirmQueryDialogComponent } from "./ConfirmQueryDialogComponent/ConfirmQueryDialogComponent";
+import CodeEditor from "./CodeEditor";
 
 const defaultQuery = "SELECT * FROM digitaltwins";
 
 const ENTER_KEY_CODE = 13;
+const editorLanguage = "sql";
 class QueryComponent extends Component {
 
   queryOptions = [
@@ -174,6 +176,7 @@ class QueryComponent extends Component {
 
     return (
       <>
+        <CodeEditor language={editorLanguage} content={selectedQuery} />
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">

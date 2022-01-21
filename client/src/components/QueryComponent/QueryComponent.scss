@@ -54,6 +54,7 @@
     font-family: $fontFamilyConsole;
     font-weight: 400;
   }
+  color: black
 }
 
 .qc-queryControls {
@@ -266,4 +267,78 @@
       border: none;
     }
   }
+}
+
+.code-edit-container {
+  position: relative;
+  height: 500px;
+  background-color: hsl(212, 35%, 95%);
+  margin: 1em 0;
+}
+
+.code-input,
+.code-output {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  border: none;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 0.8rem;
+  background: transparent;
+  white-space: pre-wrap;
+  line-height: 1.5em;
+  word-wrap: break-word;
+  font-size: 1rem;
+}
+
+.code-input {
+  opacity: 1;
+  margin: 0;
+  color: hsl(0, 0%, 40%);
+  resize: none;
+}
+
+.code-output {
+  pointer-events: none;
+  z-index: 3;
+  margin: 0;
+  overflow-y: auto;
+}
+
+code {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 1rem;
+  display: block;
+  color: hsl(0, 0%, 40%);
+  font-size: 0.8rem;
+  font-family: "PT Mono", monospace;
+}
+
+.code-edit-container :not(pre) > code[class*="language-"],
+.code-edit-container pre[class*="language-"] {
+  background: transparent;
+  margin: 0;
+  font-size: 14px;
+  font-family: "Consolas", "Courier New", Courier, monospace;
+  font-weight: 400;
+}
+
+.code-edit-container code[class*="language-"],
+.token.operator{
+  color: white;
+  background: transparent;
+}
+
+.code-edit-container {
+  position: absolute;
+  width: calc(100% - 532px);
+  margin-top: 32px;
+  margin-left: 213px;
+  background: transparent;
 }
