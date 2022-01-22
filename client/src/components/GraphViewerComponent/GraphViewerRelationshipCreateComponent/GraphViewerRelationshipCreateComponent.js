@@ -170,12 +170,12 @@ export class GraphViewerRelationshipCreateComponent extends Component {
               <IconButton iconOnly="true" iconProps={{ iconName: warningIconName }} title="Warning Relationship" ariaLabel="Warning  Relationship" />
             </div>
             <div className="warning-text">
-              <Label>No relationship available, try swapping source and target</Label>
+              <Label className="warning-label">No relationship available, try swapping source and target</Label>
             </div>
           </div>
         }
         <div className="btn-group">
-          <DefaultButton className="modal-button save-button" onClick={this.save}>Save</DefaultButton>
+          <DefaultButton className="modal-button save-button" onClick={this.save} enable={hasRelationships}>Save</DefaultButton>
           <DefaultButton className="modal-button cancel-button" onClick={this.cancel}>Cancel</DefaultButton>
         </div>
       </ModalComponent>

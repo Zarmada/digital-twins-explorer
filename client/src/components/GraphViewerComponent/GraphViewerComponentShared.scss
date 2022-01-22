@@ -47,6 +47,7 @@
   .warning-icon-wrapper {
     background-color: red;
     height: 60px;
+    margin-bottom: 10px;
   }
   .warning-icon {
     float: left;
@@ -56,7 +57,10 @@
     float: right;
     background-color: var(--background-color2);
     margin: 1px;
-    width: 200px;
+    width: 190px;
     height: 95%
+  }
+  .warning-label {
+    font-weight: 400;
   }
 }
