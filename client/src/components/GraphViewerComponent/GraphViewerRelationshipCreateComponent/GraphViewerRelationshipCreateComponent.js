@@ -175,7 +175,7 @@ export class GraphViewerRelationshipCreateComponent extends Component {
           </div>
         }
         <div className="btn-group">
-          <DefaultButton className="modal-button save-button" onClick={this.save} enable={hasRelationships}>Save</DefaultButton>
+          <DefaultButton className="modal-button save-button" onClick={this.save} disabled={!hasRelationships}>Save</DefaultButton>
           <DefaultButton className="modal-button cancel-button" onClick={this.cancel}>Cancel</DefaultButton>
         </div>
       </ModalComponent>
