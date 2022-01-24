@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-/* eslint-disable */
+/* eslint-disable max-lines-per-function */
 
 import React from "react";
 import CytoscapeComponent from "react-cytoscapejs";
@@ -524,14 +524,13 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     });
 
     if (nodeColorUpdateOnly) {
-        return true;
-    } else {
-        return new Promise(resolve => {
-          const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
-          layout.on("layoutstop", () => resolve());
-          layout.run();
-      });
+      return true;
     }
+    return new Promise(resolve => {
+      const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
+      layout.on("layoutstop", () => resolve());
+      layout.run();
+    });
   }
 
   setLayout(layout) {
