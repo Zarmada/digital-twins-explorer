@@ -474,7 +474,7 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     });
   }
 
-  doLayout(nodeColorUpdateOnly = false) {
+  updateNodeColors() {
     const cy = this.graphControl;
     const modelColors = settingsService.getModelColors();
     cy.batch(() => {
@@ -522,10 +522,11 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         cy.elements(`edge[label="${r}"]`).style("line-color", rtypes[r]);
       }
     });
+  }
 
-    if (nodeColorUpdateOnly) {
-      return true;
-    }
+  doLayout() {
+    this.updateNodeColors();
+    const cy = this.graphControl;
     return new Promise(resolve => {
       const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
       layout.on("layoutstop", () => resolve());
