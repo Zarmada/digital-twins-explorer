@@ -333,12 +333,14 @@ code {
 .token.operator{
   color: white;
   background: transparent;
+  padding-left: 0;
 }
 
 .code-edit-container {
   position: absolute;
-  width: calc(100% - 532px);
+  width: calc(100% - 560px);
   margin-top: 32px;
-  margin-left: 213px;
+  margin-left: 229px;
   background: transparent;
+  overflow: hidden;
 }

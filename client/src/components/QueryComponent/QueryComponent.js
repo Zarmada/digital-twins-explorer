@@ -37,7 +37,10 @@ class QueryComponent extends Component {
       showConfirmDeleteModal: false,
       showConfirmOverwriteModal: false,
       newQueryName: "",
-      isOverlayResultsChecked: false
+      isOverlayResultsChecked: false,
+      cursorInitialOverlay: 0,
+      cursorInitialPosition: 0,
+      TextFieldInfo: ""
     };
   }
 
@@ -65,6 +68,31 @@ class QueryComponent extends Component {
 
   onChange = evt => {
     this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
+  }
+
+  onKeyDown = evt => {
+    this.setState({cursorInitialPosition: evt.target.selectionStart});
+  }
+
+  onKeyUp = evt => {
+    this.changeCursor(evt.target.selectionStart, evt.target.clientWidth);
+  }
+
+  changeCursor = (cursorPosition, areaWidth) => {
+    const { cursorInitialOverlay, cursorInitialPosition } = this.state;
+    const charSize = 7.82;
+    const maximunCharacters = (areaWidth / charSize);
+    this.setState({TextFieldInfo: `${cursorInitialOverlay} ${cursorInitialPosition} ${cursorPosition} ${maximunCharacters}`});
+    if (cursorPosition === 0) {
+      document.getElementById("container").scrollLeft = 0;
+      this.setState({ cursorInitialOverlay: 0 });
+    } else if ((cursorPosition - cursorInitialOverlay > maximunCharacters)) {
+      document.getElementById("container").scrollLeft += 7.9;
+      this.setState({ cursorInitialOverlay: cursorInitialOverlay + 1 });
+    } else if (cursorInitialOverlay > cursorPosition) {
+      document.getElementById("container").scrollLeft -= 7.9;
+      this.setState({ cursorInitialOverlay: cursorInitialOverlay - 1 });
+    }
   }
 
   onChangeQueryName = evt => {
@@ -176,6 +204,7 @@ class QueryComponent extends Component {
 
     return (
       <>
+        <label>{this.state.TextFieldInfo}</label>
         <CodeEditor language={editorLanguage} content={selectedQuery} />
         <div className="qc-grid">
           <div className="qc-queryBox">
@@ -194,7 +223,8 @@ class QueryComponent extends Component {
             </div>
             <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
               <form onSubmit={this.executeQuery}>
-                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query" />
+                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onKeyUp={this.onKeyUp} onKeyDown={this.onKeyDown} onBlur={this.changeCursor.bind(14, 0)} />
               </form>
             </FocusZone>
             <div className="qc-queryControls">

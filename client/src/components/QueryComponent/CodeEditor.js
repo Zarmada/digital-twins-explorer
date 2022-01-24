@@ -7,8 +7,8 @@ const CodeEditor = props => {
   }, [ props.language, props.content ]);
 
   return (
-    <div className="code-edit-container">
-      <pre className="code-output">
+    <div className="code-edit-container" >
+      <pre id="container" className="code-output">
         <code className={`language-${props.language}`}>{props.content}</code>
       </pre>
     </div>
