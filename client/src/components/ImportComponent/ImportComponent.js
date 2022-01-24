@@ -63,7 +63,6 @@ export class ImportComponent extends Component {
     try {
       const dataImported = await importService.save(this.data);
       this.setState({ isComplete: true, showImportModal: true, dataImported });
-      eventService.publishCloseComponent("importComponent");
     } catch (exc) {
       exc.customMessage = "Error in importing graph";
       eventService.publishError(exc);
