@@ -37,18 +37,21 @@ class QueryComponent extends Component {
       newQueryName: "",
       isOverlayResultsChecked: false,
       multiline: false,
-      multilineHolder: false
+      multilineHolder: false,
+      isFocused: false,
+      textInfo: "0",
+      disabled: false
     };
   }
 
   componentDidMount() {
     this.setState({ queries: settingsService.queries });
     eventService.subscribeEnvironmentChange(this.clearAfterEnvironmentChange);
-    document.addEventListener("keyup", this.upFunction, false);
-    document.addEventListener("click", this.onFocusLost, false);
+    document.addEventListener("keydown", this.upFunction, false);
   }
 
   upFunction = event => {
+    this.setState({ disabled: false });
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
       this.setState({ multiline: true, multilineHolder: true });
@@ -84,7 +87,12 @@ class QueryComponent extends Component {
   }
 
   onFocusLost = () => {
+    this.setState({ disabled: true });
     this.setState({ multiline: false });
+  }
+
+  onMouseOver = () => {
+    this.setState({ disabled: false });
   }
 
   onChangeQueryName = evt => {
@@ -192,10 +200,20 @@ class QueryComponent extends Component {
 
   render() {
     const { queries, selectedQuery, selectedQueryKey, showSaveQueryModal, newQueryName,
-      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked } = this.state;
+      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked, disabled } = this.state;
 
     return (
       <>
+        <label>{this.state.textInfo}</label>
+        <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
+          <form onSubmit={this.executeQuery}>
+            <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+              onFocus={this.onFocusGained} multiline={this.state.multiline} autoAdjustHeight="true" isFocused={this.state.isFocused} onBlur={this.onFocusLost} disabled={disabled}
+              onMouseOver={this.onMouseOver} ref={input => {
+                this.queryField = input;
+              }} />
+          </form>
+        </FocusZone>
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
@@ -209,16 +227,8 @@ class QueryComponent extends Component {
                 styles={{
                   dropdown: { width: 200 }
                 }}
-                onChange={this.onSelectedQueryChange} />
+                onChange={this.onSelectedQueryChange} onFocus={this.onFocusOther} />
             </div>
-            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
-              <form onSubmit={this.executeQuery}>
-                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
-                  onFocus={this.onFocusGained} multiline={this.state.multiline} ref={input => {
-                    this.queryField = input;
-                  }} />
-              </form>
-            </FocusZone>
             <div className="qc-queryControls">
               <FocusZone onKeyUp={this.handleOverlayResultsKeyUp}>
                 <Checkbox label={this.props.t("queryComponent.overlayResults")} checked={isOverlayResultsChecked} onChange={this.onOverlayResultsChange} boxSide="end" />

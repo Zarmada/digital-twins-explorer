@@ -31,6 +31,7 @@
   height: 100%;
   overflow: hidden;
   background-color: $backgroundColor5;
+  column-gap: calc(100% - 500px);
 }
 
 .qc-label {
@@ -53,6 +54,7 @@
     font-size: 14px;
     font-family: $fontFamilyConsole;
     font-weight: 400;
+    background: transparent;
   }
 }
 
@@ -60,6 +62,7 @@
   display: flex;
   margin-top: 2px;
   align-items: center;
+  width: 315px;
   .ms-Checkbox {
     align-items: center;
     margin-right: 10px;
@@ -268,9 +271,30 @@
   }
 }
 
+.ms-TextField.qc-query
+.ms-TextField-wrapper {
+  z-index: 2;
+  position: fixed;
+  margin-top: 41px;
+  margin-left: 225px;
+  width: calc(100% - 550px);
+}
+
 .ms-TextField--multiline
 .ms-TextField-wrapper {
   z-index: 2;
   position: fixed;
+  height: auto;
+  margin-top: 32px;
+  margin-left: 225px;
   width: calc(100% - 550px);
+}
+
+.ms-TextField--multiline
+.ms-TextField-fieldGroup {
+  height: auto;
+}
+
+.ms-TextField-field  {
+  background: transparent;
 }
