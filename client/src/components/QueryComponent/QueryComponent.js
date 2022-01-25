@@ -39,7 +39,6 @@ class QueryComponent extends Component {
       multiline: false,
       multilineHolder: false,
       isFocused: false,
-      textInfo: "0",
       disabled: false
     };
   }
@@ -47,10 +46,9 @@ class QueryComponent extends Component {
   componentDidMount() {
     this.setState({ queries: settingsService.queries });
     eventService.subscribeEnvironmentChange(this.clearAfterEnvironmentChange);
-    document.addEventListener("keydown", this.upFunction, false);
   }
 
-  upFunction = event => {
+  onKeyFunction = event => {
     this.setState({ disabled: false });
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
@@ -204,12 +202,11 @@ class QueryComponent extends Component {
 
     return (
       <>
-        <label>{this.state.textInfo}</label>
         <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
           <form onSubmit={this.executeQuery}>
             <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
               onFocus={this.onFocusGained} multiline={this.state.multiline} autoAdjustHeight="true" isFocused={this.state.isFocused} onBlur={this.onFocusLost} disabled={disabled}
-              onMouseOver={this.onMouseOver} ref={input => {
+              onMouseOver={this.onMouseOver} onKeyDown={this.onKeyFunction} ref={input => {
                 this.queryField = input;
               }} />
           </form>
