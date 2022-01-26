@@ -22,7 +22,6 @@
 
 .qc-queryBox {
   grid-row: 1;
-  display: grid;
   grid-gap: 10px;
   grid-template-columns: 200px auto 290px;
   font-size: 12px;
@@ -60,9 +59,12 @@
 
 .qc-queryControls {
   display: flex;
-  margin-top: 2px;
+  margin-top: -36px;
+  margin-right: -25px;
   align-items: center;
   width: 315px;
+  position: relative;
+  float: right;
   .ms-Checkbox {
     align-items: center;
     margin-right: 10px;
@@ -275,7 +277,7 @@
 .ms-TextField-wrapper {
   z-index: 2;
   position: fixed;
-  margin-top: 41px;
+  margin-top: -38px;
   margin-left: 225px;
   width: calc(100% - 550px);
 }

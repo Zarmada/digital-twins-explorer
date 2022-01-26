@@ -211,15 +211,6 @@ class QueryComponent extends Component {
 
     return (
       <>
-        <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
-          <form onSubmit={this.executeQuery}>
-            <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
-              onFocus={this.onFocusGained} multiline={multiline} rows={rowCount} autoAdjustHeight="true" isFocused={isFocused} onBlur={this.onFocusLost} disabled={disabled}
-              onMouseOver={this.onMouseOver} onKeyDown={this.onKeyFunction} tabIndex="2" ref={input => {
-                this.queryField = input;
-              }} />
-          </form>
-        </FocusZone>
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
@@ -231,16 +222,24 @@ class QueryComponent extends Component {
                 onRenderOption={this.onRenderOption}
                 onKeyDown={this.onMouseOver}
                 role="combobox"
-                tabIndex={1}
                 styles={{
                   dropdown: { width: 200 }
                 }}
                 onChange={this.onSelectedQueryChange} onFocus={this.onFocusOther} />
             </div>
+            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
+              <form onSubmit={this.executeQuery}>
+                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onFocus={this.onFocusGained} multiline={multiline} rows={rowCount} autoAdjustHeight="true" isFocused={isFocused} onBlur={this.onFocusLost} disabled={disabled}
+                  onMouseOver={this.onMouseOver} onKeyDown={this.onKeyFunction} ref={input => {
+                    this.queryField = input;
+                  }} />
+              </form>
+            </FocusZone>
             <div className="qc-queryControls">
               <FocusZone onKeyUp={this.handleOverlayResultsKeyUp} onKeyDown={this.onMouseOver} >
                 <Checkbox label={this.props.t("queryComponent.overlayResults")} checked={isOverlayResultsChecked} onChange={this.onOverlayResultsChange}
-                  boxSide="end" tabIndex="3" />
+                  boxSide="end" />
               </FocusZone>
               <DefaultButton className="query-button" onClick={this.executeQuery} ariaLive="assertive">
                 {this.props.t("queryComponent.defaultButton")}
