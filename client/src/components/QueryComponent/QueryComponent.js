@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import { TextField, Dropdown, DefaultButton, Icon, IconButton,
   FocusZone, FocusZoneTabbableElements, Checkbox } from "office-ui-fabric-react";
 import { withTranslation } from "react-i18next";
+import Editor from "@monaco-editor/react";
 
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
@@ -174,6 +175,10 @@ class QueryComponent extends Component {
 
     return (
       <>
+        <Editor
+          height="90vh"
+          defaultLanguage="sql"
+          defaultValue="// some comment" />
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
