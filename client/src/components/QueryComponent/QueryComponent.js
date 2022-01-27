@@ -76,14 +76,8 @@ class QueryComponent extends Component {
   }
 
   onChange = evt => {
-    let count = 0;
     this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
-    evt.target.value.split("").map(character => {
-      if (character === "\n") {
-        count++;
-      }
-      return count;
-    });
+    const count = evt.target.value.split("").filter(c => c === "\n").length;
     this.setState({ rowCount: count + 1 });
   }
 
@@ -94,8 +88,7 @@ class QueryComponent extends Component {
   }
 
   onFocusLost = () => {
-    this.setState({ disabled: true });
-    this.setState({ multiline: false });
+    this.setState({ disabled: true, multiline: false });
   }
 
   onMouseOver = () => {
