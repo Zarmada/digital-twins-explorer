@@ -30,19 +30,36 @@ class QueryComponent extends Component {
     this.state = {
       queries: [],
       selectedQuery: defaultQuery,
+      selectedQueryMultiline: "",
       selectedQueryKey: null,
       queryKeyToBeRemoved: "",
       showSaveQueryModal: false,
       showConfirmDeleteModal: false,
       showConfirmOverwriteModal: false,
       newQueryName: "",
-      isOverlayResultsChecked: false
+      isOverlayResultsChecked: false,
+      rowCount: "20px",
+      display: false,
+      monacoHolder: false
     };
   }
 
   componentDidMount() {
     this.setState({ queries: settingsService.queries });
     eventService.subscribeEnvironmentChange(this.clearAfterEnvironmentChange);
+  }
+
+  onKeyFunction = event => {
+    const enterPressed = event.key === "Enter";
+    if (event.shiftKey && enterPressed) {
+      this.setState({ monacoHolder: true, display: true, selectedQueryMultiline: event.target.value });
+    }
+  }
+
+  onFocusGained = () => {
+    if (this.state.monacoHolder) {
+      this.setState({ display: true });
+    }
   }
 
   componentWillUnmount() {
@@ -64,6 +81,21 @@ class QueryComponent extends Component {
 
   onChange = evt => {
     this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
+  }
+
+  handleEditorChange = value => {
+    this.setState({ selectedQueryMultiline: value, selectedQueryKey: null });
+    let count = value.split("").filter(c => c === "\n").length;
+    count = count > 20 ? 20 : count;
+    this.setState({ rowCount: `${(count + 1) * 19}px` });
+  }
+
+  handleEditorBlur = evt => {
+    this.setState({ display: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
+  }
+
+  handleEditorDidMount(editor) {
+    editor.focus();
   }
 
   onChangeQueryName = evt => {
@@ -171,14 +203,21 @@ class QueryComponent extends Component {
 
   render() {
     const { queries, selectedQuery, selectedQueryKey, showSaveQueryModal, newQueryName,
-      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked } = this.state;
+      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked, rowCount, display, selectedQueryMultiline } = this.state;
 
     return (
       <>
-        <Editor
-          height="90vh"
-          defaultLanguage="sql"
-          defaultValue="// some comment" />
+        {display && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
+          <Editor
+            height={rowCount}
+            theme="vs-dark"
+            language="sql"
+            value={selectedQueryMultiline}
+            onChange={this.handleEditorChange}
+            ref={this.monacoRef}
+            onMount={this.handleEditorDidMount}
+            options={{ scrollBeyondLastLine: false }} />
+        </div> }
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
@@ -196,7 +235,8 @@ class QueryComponent extends Component {
             </div>
             <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
               <form onSubmit={this.executeQuery}>
-                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query" />
+                {!display && <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} /> }
               </form>
             </FocusZone>
             <div className="qc-queryControls">
