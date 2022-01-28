@@ -78,7 +78,7 @@ class QueryComponent extends Component {
   onChange = evt => {
     this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
     const count = evt.target.value.split("").filter(c => c === "\n").length;
-    this.setState({ rowCount: count + 1 });
+    this.setState({ rowCount: count + 1, multilineHolder: count !== 0, multiline: count !== 0 });
   }
 
   onFocusGained = () => {
