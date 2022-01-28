@@ -38,8 +38,8 @@ class QueryComponent extends Component {
       showConfirmOverwriteModal: false,
       newQueryName: "",
       isOverlayResultsChecked: false,
-      rowCount: "20px",
-      display: false,
+      rowHeight: "20px",
+      displayEditor: false,
       monacoHolder: false
     };
   }
@@ -52,13 +52,13 @@ class QueryComponent extends Component {
   onKeyFunction = event => {
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
-      this.setState({ monacoHolder: true, display: true, selectedQueryMultiline: event.target.value });
+      this.setState({ monacoHolder: true, displayEditor: true, selectedQueryMultiline: event.target.value });
     }
   }
 
   onFocusGained = () => {
     if (this.state.monacoHolder) {
-      this.setState({ display: true });
+      this.setState({ displayEditor: true });
     }
   }
 
@@ -87,11 +87,11 @@ class QueryComponent extends Component {
     this.setState({ selectedQueryMultiline: value, selectedQueryKey: null });
     let count = value.split("").filter(c => c === "\n").length;
     count = count > 20 ? 20 : count;
-    this.setState({ rowCount: `${(count + 1) * 19}px` });
+    this.setState({ rowHeight: `${(count + 1) * 19}px` });
   }
 
   handleEditorBlur = evt => {
-    this.setState({ display: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
+    this.setState({ displayEditor: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
   }
 
   handleEditorDidMount(editor) {
@@ -203,13 +203,13 @@ class QueryComponent extends Component {
 
   render() {
     const { queries, selectedQuery, selectedQueryKey, showSaveQueryModal, newQueryName,
-      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked, rowCount, display, selectedQueryMultiline } = this.state;
+      showConfirmDeleteModal, showConfirmOverwriteModal, isOverlayResultsChecked, rowHeight, displayEditor, selectedQueryMultiline } = this.state;
 
     return (
       <>
-        {display && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
+        {displayEditor && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
           <Editor
-            height={rowCount}
+            height={rowHeight}
             theme="vs-dark"
             language="sql"
             value={selectedQueryMultiline}
@@ -235,7 +235,7 @@ class QueryComponent extends Component {
             </div>
             <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
               <form onSubmit={this.executeQuery}>
-                {!display && <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                {!displayEditor && <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
                   onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} /> }
               </form>
             </FocusZone>
