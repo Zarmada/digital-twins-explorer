@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import { TextField, Dropdown, DefaultButton, Icon, IconButton,
   FocusZone, FocusZoneTabbableElements, Checkbox } from "office-ui-fabric-react";
 import { withTranslation } from "react-i18next";
-import Editor from "@monaco-editor/react";
+import * as MonacoEditor from "./MonacoEditor";
 
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
@@ -94,8 +94,57 @@ class QueryComponent extends Component {
     this.setState({ displayEditor: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
   }
 
+  createDependencyProposals(range, editor) {
+    return [
+      {
+        label: '"lodash"',
+        kind: editor.languages.CompletionItemKind.Function,
+        documentation: "The Lodash library exported as Node.js modules.",
+        insertText: '"lodash": "*"'
+      },
+      {
+        label: '"express"',
+        kind: editor.languages.CompletionItemKind.Function,
+        documentation: "Fast, unopinionated, minimalist web framework",
+        insertText: '"express": "*"'
+      },
+      {
+        label: '"mkdirp"',
+        kind: editor.languages.CompletionItemKind.Function,
+        documentation: "Recursively mkdir, like <code>mkdir -p</code>",
+        insertText: '"mkdirp": "*"'
+      }
+    ];
+  }
+
   handleEditorDidMount(editor) {
     editor.focus();
+    editor.languages.registerCompletionItemProvider("sql", {
+      provideCompletionItems: (model, position) => {
+        const textUntilPosition = model.getValueInRange({
+          startLineNumber: 1,
+          startColumn: 1,
+          endLineNumber: position.lineNumber,
+          endColumn: position.column
+        });
+        const match = textUntilPosition.match(
+          /"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/
+        );
+        if (!match) {
+          return { suggestions: [] };
+        }
+        const word = model.getWordUntilPosition(position);
+        const range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn
+        };
+        return {
+          suggestions: this.createDependencyProposals(range)
+        };
+      }
+    });
   }
 
   onChangeQueryName = evt => {
@@ -207,8 +256,8 @@ class QueryComponent extends Component {
 
     return (
       <>
-        {displayEditor && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
-          <Editor
+        {displayEditor && <div className="qc-monaco-layer" >
+          <MonacoEditor
             height={rowHeight}
             theme="vs-dark"
             language="sql"
