@@ -29,6 +29,7 @@ class QueryComponent extends Component {
     this.state = {
       queries: [],
       selectedQuery: defaultQuery,
+      selectedQueryMultiline: defaultQuery,
       selectedQueryKey: null,
       queryKeyToBeRemoved: "",
       showSaveQueryModal: false,
@@ -53,6 +54,9 @@ class QueryComponent extends Component {
     this.setState({ disabled: false });
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
+      if (!this.state.multilineHolder) {
+        this.setState({ selectedQueryMultiline: event.target.value });
+      }
       this.setState({ multiline: true, multilineHolder: true });
       this.queryField.focus();
     } else if (enterPressed) {
@@ -79,19 +83,19 @@ class QueryComponent extends Component {
   }
 
   onChange = evt => {
-    this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null });
+    this.setState({ selectedQuery: evt.target.value, selectedQueryKey: null, selectedQueryMultiline: evt.target.value });
     const count = evt.target.value.split("").filter(c => c === "\n").length;
     this.setState({ rowCount: count + 1, multilineHolder: count !== 0, multiline: count !== 0 });
   }
 
   onFocusGained = () => {
     if (this.state.multilineHolder) {
-      this.setState({ multiline: true });
+      this.setState(prevState => ({ selectedQuery: prevState.selectedQueryMultiline, multiline: true }));
     }
   }
 
   onFocusLost = () => {
-    this.setState({ disabled: true, multiline: false });
+    this.setState(prevState => ({ disabled: true, multiline: false, selectedQuery: prevState.selectedQueryMultiline.replaceAll("\n", " ") }));
   }
 
   onMouseOver = () => {
