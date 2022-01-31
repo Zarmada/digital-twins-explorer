@@ -380,7 +380,6 @@ class App extends Component {
   }
 
   toggleEnableCustomLayouts = enableCustomLayouts => {
-    console.log("toggleEnableCustomLayouts in App", enableCustomLayouts);
     settingsService.enableCustomLayouts = enableCustomLayouts;
     this.setState({enableCustomLayouts});
   }

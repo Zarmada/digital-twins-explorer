@@ -302,7 +302,7 @@ class ModelGraphViewerComponent extends React.Component {
       await this.cyRef.current.doLayout(this.progressCallback);
     } else {
       this.cyRef.current.addRelationships(this.componentRelationships, "component");
-      await this.cyRef.current(this.progressCallback);
+      await this.cyRef.current.doLayout(this.progressCallback);
     }
     this.setState({ showComponents: !showComponents, isLoading: false });
     this.updateProgress(100);
