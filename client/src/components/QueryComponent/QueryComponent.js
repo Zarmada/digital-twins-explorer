@@ -55,6 +55,9 @@ class QueryComponent extends Component {
     if (event.shiftKey && enterPressed) {
       this.setState({ multiline: true, multilineHolder: true });
       this.queryField.focus();
+    } else if (enterPressed) {
+      this.executeQuery(event);
+      event.preventDefault();
     }
   }
 
