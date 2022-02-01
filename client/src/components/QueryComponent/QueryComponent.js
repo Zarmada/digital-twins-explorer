@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import { TextField, Dropdown, DefaultButton, Icon, IconButton,
   FocusZone, FocusZoneTabbableElements, Checkbox } from "office-ui-fabric-react";
 import { withTranslation } from "react-i18next";
-import * as MonacoEditor from "./MonacoEditor";
+import Editor from "@monaco-editor/react";
 
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
@@ -42,6 +42,7 @@ class QueryComponent extends Component {
       displayEditor: false,
       monacoHolder: false
     };
+    this.monacoRef = React.createRef();
   }
 
   componentDidMount() {
@@ -117,34 +118,8 @@ class QueryComponent extends Component {
     ];
   }
 
-  handleEditorDidMount(editor) {
-    editor.focus();
-    editor.languages.registerCompletionItemProvider("sql", {
-      provideCompletionItems: (model, position) => {
-        const textUntilPosition = model.getValueInRange({
-          startLineNumber: 1,
-          startColumn: 1,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column
-        });
-        const match = textUntilPosition.match(
-          /"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/
-        );
-        if (!match) {
-          return { suggestions: [] };
-        }
-        const word = model.getWordUntilPosition(position);
-        const range = {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: word.startColumn,
-          endColumn: word.endColumn
-        };
-        return {
-          suggestions: this.createDependencyProposals(range)
-        };
-      }
-    });
+  handleEditorDidMount = () => {
+    this.monacoRef.focus();
   }
 
   onChangeQueryName = evt => {
@@ -257,7 +232,7 @@ class QueryComponent extends Component {
     return (
       <>
         {displayEditor && <div className="qc-monaco-layer" >
-          <MonacoEditor
+          <Editor
             height={rowHeight}
             theme="vs-dark"
             language="sql"
