@@ -10,6 +10,7 @@ import { colors, dagreOptions, colaOptions, klayOptions, fcoseOptions, d3ForceOp
 import { settingsService } from "../../../services/SettingsService";
 import { sessionService } from "../../../services/SessionService";
 import { storageService } from "../../../services/StorageService";
+import { layoutService } from "../../../services/LayoutService";
 import { print } from "../../../services/LoggingService";
 import { addNavigator } from "../../../utils/utilities";
 import ModalComponent from "../../ModalComponent/ModalComponent";
@@ -166,8 +167,7 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
   }
 
   clearLayout() {
-    sessionService.clearModelsLayout(this.layout);
-    storageService.clearModelsLayout(this.layout);
+    layoutService.clearModelsLayout(this.layout);
   }
 
   showClearLayoutMessage() {

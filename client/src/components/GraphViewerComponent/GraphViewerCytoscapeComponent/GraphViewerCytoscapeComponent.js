@@ -12,6 +12,7 @@ import { getUniqueRelationshipId, addNavigator } from "../../../utils/utilities"
 import { settingsService } from "../../../services/SettingsService";
 import { sessionService } from "../../../services/SessionService";
 import { storageService } from "../../../services/StorageService";
+import { layoutService } from "../../../services/LayoutService";
 import { print } from "../../../services/LoggingService";
 
 import "./GraphViewerCytoscapeComponent.scss";
@@ -493,8 +494,7 @@ export class GraphViewerCytoscapeComponent extends React.Component {
   }
 
   clearLayout() {
-    sessionService.clearGraphLayout(this.layout, this.query);
-    storageService.clearGraphLayout(this.layout, this.query);
+    layoutService.clearGraphLayout(this.layout, this.query);
   }
 
   doLayout() {
