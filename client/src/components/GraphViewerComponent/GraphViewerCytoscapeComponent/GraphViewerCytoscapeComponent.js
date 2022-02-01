@@ -497,12 +497,13 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     layoutService.clearGraphLayout(this.layout, this.query);
   }
 
-  doLayout() {
+  doCustomLayout() {
     const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, this.query);
     if (!currentLayoutPositions) {
       const storagedPositions = storageService.getGraphLayoutPositionsByQuery(this.layout, this.query);
       sessionService.setInitialGraphLayoutPositions(this.layout, this.query, storagedPositions);
     }
+  }
 
   updateNodeColors() {
     const cy = this.graphControl;
