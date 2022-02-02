@@ -42,7 +42,6 @@ class QueryComponent extends Component {
       displayEditor: false,
       monacoHolder: false
     };
-    this.monacoRef = React.createRef();
   }
 
   componentDidMount() {
@@ -95,31 +94,47 @@ class QueryComponent extends Component {
     this.setState({ displayEditor: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
   }
 
-  createDependencyProposals(range, editor) {
-    return [
-      {
-        label: '"lodash"',
-        kind: editor.languages.CompletionItemKind.Function,
-        documentation: "The Lodash library exported as Node.js modules.",
-        insertText: '"lodash": "*"'
-      },
-      {
-        label: '"express"',
-        kind: editor.languages.CompletionItemKind.Function,
-        documentation: "Fast, unopinionated, minimalist web framework",
-        insertText: '"express": "*"'
-      },
-      {
-        label: '"mkdirp"',
-        kind: editor.languages.CompletionItemKind.Function,
-        documentation: "Recursively mkdir, like <code>mkdir -p</code>",
-        insertText: '"mkdirp": "*"'
-      }
-    ];
-  }
 
-  handleEditorDidMount = () => {
-    this.monacoRef.focus();
+  handleEditorDidMount(editor, monaco) {
+    editor.focus();
+    const createDependencyProposals = range =>
+      [
+        {
+          label: "\"lodash\"",
+          kind: monaco.languages.CompletionItemKind.Function,
+          documentation: "The Lodash library exported as Node.js modules.",
+          insertText: "\"lodash\": \"*\"",
+          range
+        },
+        {
+          label: "express",
+          kind: monaco.languages.CompletionItemKind.Function,
+          documentation: "Fast, unopinionated, minimalist web framework",
+          insertText: "express",
+          range
+        },
+        {
+          label: "mkdirp",
+          kind: monaco.languages.CompletionItemKind.Function,
+          documentation: "Recursively mkdir, like <code>mkdir -p</code>",
+          insertText: "mkdirp",
+          range
+        }
+      ];
+    monaco.languages.registerCompletionItemProvider("sql", {
+      provideCompletionItems: (model, position) => {
+        const word = model.getWordUntilPosition(position);
+        const range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn
+        };
+        return {
+          suggestions: createDependencyProposals(range)
+        };
+      }
+    });
   }
 
   onChangeQueryName = evt => {
@@ -231,7 +246,7 @@ class QueryComponent extends Component {
 
     return (
       <>
-        {displayEditor && <div className="qc-monaco-layer" >
+        {displayEditor && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
           <Editor
             height={rowHeight}
             theme="vs-dark"
