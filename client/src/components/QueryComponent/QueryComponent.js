@@ -10,6 +10,7 @@ import Editor from "@monaco-editor/react";
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
+import { dependencyProposalSegmentOne, dependencyProposalSegmentTwo, dependencyProposalSegmentThree } from "../../services/MonacoConstants";
 
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
@@ -18,6 +19,9 @@ import { ConfirmQueryDialogComponent } from "./ConfirmQueryDialogComponent/Confi
 const defaultQuery = "SELECT * FROM digitaltwins";
 
 const ENTER_KEY_CODE = 13;
+
+const tokenPattern = new RegExp("([a-zA-Z]+)((?:\\.[a-zA-Z]+)*)", "g"); //eslint-disable-line
+
 class QueryComponent extends Component {
 
   queryOptions = [
@@ -94,33 +98,9 @@ class QueryComponent extends Component {
     this.setState({ displayEditor: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
   }
 
-
   handleEditorDidMount(editor, monaco) {
     editor.focus();
-    const createDependencyProposals = range =>
-      [
-        {
-          label: "\"lodash\"",
-          kind: monaco.languages.CompletionItemKind.Function,
-          documentation: "The Lodash library exported as Node.js modules.",
-          insertText: "\"lodash\": \"*\"",
-          range
-        },
-        {
-          label: "express",
-          kind: monaco.languages.CompletionItemKind.Function,
-          documentation: "Fast, unopinionated, minimalist web framework",
-          insertText: "express",
-          range
-        },
-        {
-          label: "mkdirp",
-          kind: monaco.languages.CompletionItemKind.Function,
-          documentation: "Recursively mkdir, like <code>mkdir -p</code>",
-          insertText: "mkdirp",
-          range
-        }
-      ];
+    const createDependencyProposals = (range, kind) => [ ...dependencyProposalSegmentOne(range, kind), ...dependencyProposalSegmentTwo(range, kind), ...dependencyProposalSegmentThree(range, kind) ];
     monaco.languages.registerCompletionItemProvider("sql", {
       provideCompletionItems: (model, position) => {
         const word = model.getWordUntilPosition(position);
@@ -131,10 +111,17 @@ class QueryComponent extends Component {
           endColumn: word.endColumn
         };
         return {
-          suggestions: createDependencyProposals(range)
+          suggestions: createDependencyProposals(range, monaco.languages.CompletionItemKind.Function)
         };
       }
     });
+  }
+
+  handleEditorDidUnMount(editor, monaco) {
+    editor.unFocus();
+    monaco.languages.registerCompletionItemProvider("", {
+      provideCompletionItems: () => null
+    }).dispose();
   }
 
   onChangeQueryName = evt => {
@@ -246,7 +233,7 @@ class QueryComponent extends Component {
 
     return (
       <>
-        {displayEditor && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
+        <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} style={{ display: displayEditor ? "block" : "none" }} >
           <Editor
             height={rowHeight}
             theme="vs-dark"
@@ -255,8 +242,9 @@ class QueryComponent extends Component {
             onChange={this.handleEditorChange}
             ref={this.monacoRef}
             onMount={this.handleEditorDidMount}
+            onBlur={this.handleEditorDidUnMount}
             options={{ scrollBeyondLastLine: false }} />
-        </div> }
+        </div>
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
