@@ -259,7 +259,7 @@
         "eagerLoadingField": "Eager Loading",
         "cachingField": "Caching",
         "highContrastField": "High Contrast",
-        "enableCustomLayouts": "Enable custom layouts"
+        "enableCustomLayouts": "Enable Custom Layouts"
     },
     "propertyInspectorComponent": {
         "jsonEditorEmptyValue": "Unset",
