@@ -20,8 +20,6 @@ const defaultQuery = "SELECT * FROM digitaltwins";
 
 const ENTER_KEY_CODE = 13;
 
-const tokenPattern = new RegExp("([a-zA-Z]+)((?:\\.[a-zA-Z]+)*)", "g"); //eslint-disable-line
-
 class QueryComponent extends Component {
 
   queryOptions = [
@@ -115,13 +113,6 @@ class QueryComponent extends Component {
         };
       }
     });
-  }
-
-  handleEditorDidUnMount(editor, monaco) {
-    editor.unFocus();
-    monaco.languages.registerCompletionItemProvider("", {
-      provideCompletionItems: () => null
-    }).dispose();
   }
 
   onChangeQueryName = evt => {
@@ -242,7 +233,6 @@ class QueryComponent extends Component {
             onChange={this.handleEditorChange}
             ref={this.monacoRef}
             onMount={this.handleEditorDidMount}
-            onBlur={this.handleEditorDidUnMount}
             options={{ scrollBeyondLastLine: false }} />
         </div>
         <div className="qc-grid">
