@@ -85,7 +85,7 @@ class ApiService {
     await this.initialize();
 
     let count = 1;
-    for await (const page of this.client.queryTwins(query.replace("'", "")).byPage()) {//eslint-disable-line
+    for await (const page of this.client.queryTwins(query).byPage()) {
       print(`Ran query for twins, page ${count++}:`, "info");
       print(JSON.stringify(page, null, 2), "info");
       await callback(getDataFromQueryResponse(page.value));
