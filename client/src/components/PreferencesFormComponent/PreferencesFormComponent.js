@@ -75,6 +75,10 @@ export class PreferencesFormComponent extends Component {
     this.props.toggleHighContrastMode(checked);
   }
 
+  toggleEnableCustomLayouts = (evt, checked) => {
+    this.props.toggleEnableCustomLayouts(checked);
+  }
+
   onToggleOptionalComponentChange = id => this.props.toggleOptionalComponent(id)
 
   handleToggleKeypress = (e, component) => {
@@ -84,7 +88,7 @@ export class PreferencesFormComponent extends Component {
   }
 
   render() {
-    const { optionalComponentsState, contrast } = this.props;
+    const { optionalComponentsState, contrast, enableCustomLayouts } = this.props;
     const { showModal, eagerLoading, caching } = this.state;
 
     return (
@@ -106,6 +110,8 @@ export class PreferencesFormComponent extends Component {
             <h2 className="heading-2">{this.props.t("preferencesFormComponent.heading3")}</h2>
             <Toggle id="highContrastField" className="configuration-input"
               checked={contrast === "high-contrast"} onChange={this.toggleHighContrastMode} label={this.props.t("preferencesFormComponent.highContrastField")} inlineLabel />
+            <Toggle id="enableCustomLayouts" className="configuration-input"
+              checked={enableCustomLayouts === true} onChange={this.toggleEnableCustomLayouts} label={this.props.t("preferencesFormComponent.enableCustomLayouts")} inlineLabel />
           </form>
         </FocusZone>
       </ModalComponent>

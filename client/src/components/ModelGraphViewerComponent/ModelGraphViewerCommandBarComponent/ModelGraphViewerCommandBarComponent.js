@@ -20,6 +20,11 @@ const dropdownButtonStyles = {
   marginLeft: 10
 };
 
+const singleButtonStyles = {
+  width: 30,
+  height: 30
+};
+
 class ModelGraphViewerCommandBarComponent extends Component {
 
   constructor(props) {
@@ -38,6 +43,26 @@ class ModelGraphViewerCommandBarComponent extends Component {
       className: this.buttonClass,
       subMenuProps: {},
       style: dropdownButtonStyles
+    },
+    {
+      key: "saveLayout",
+      text: this.props.t("graphViewerCommandBarComponent.buttonGroupItems.saveLayout"),
+      ariaLabel: this.props.t("graphViewerCommandBarComponent.buttonGroupItems.saveLayout"),
+      iconProps: { iconName: "Save" },
+      onClick: () => this.props.onSaveLayoutClicked(),
+      iconOnly: true,
+      className: this.buttonClass,
+      style: singleButtonStyles
+    },
+    {
+      key: "resetLayout",
+      text: this.props.t("graphViewerCommandBarComponent.buttonGroupItems.resetLayout"),
+      ariaLabel: this.props.t("graphViewerCommandBarComponent.buttonGroupItems.resetLayout"),
+      iconProps: { iconName: "Delete" },
+      onClick: () => this.props.onClearLayoutClicked(),
+      iconOnly: true,
+      className: this.buttonClass,
+      style: singleButtonStyles
     }
   ]
 

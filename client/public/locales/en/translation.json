@@ -83,7 +83,9 @@
                 "text": "Show all relationships",
                 "ariaLabel": "show all relationships"
             },
-            "showTwins": "Show all"
+            "showTwins": "Show all",
+            "saveLayout": "Save Layout",
+            "resetLayout": "Reset Layout"
         },
         "expansionLevelItems": {
             "ariaLabel": "Select number of layers to expand",
@@ -256,7 +258,8 @@
         "heading3": "Display Settings",
         "eagerLoadingField": "Eager Loading",
         "cachingField": "Caching",
-        "highContrastField": "High Contrast"
+        "highContrastField": "High Contrast",
+        "enableCustomLayouts": "Enable Custom Layouts"
     },
     "propertyInspectorComponent": {
         "jsonEditorEmptyValue": "Unset",

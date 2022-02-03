@@ -3,11 +3,17 @@
 
 import React from "react";
 import CytoscapeComponent from "react-cytoscapejs";
+import { DefaultButton } from "office-ui-fabric-react";
 
 import { graphStyles, modelWithImageStyle, minZoomShowLabels, ellipsisMaxTextLength, ellipsisMaxTextLengthWithImage } from "./config";
 import { colors, dagreOptions, colaOptions, klayOptions, fcoseOptions, d3ForceOptions, navigationOptions } from "../../../config/CytoscapeConfig";
 import { settingsService } from "../../../services/SettingsService";
+import { sessionService } from "../../../services/SessionService";
+import { storageService } from "../../../services/StorageService";
+import { layoutService } from "../../../services/LayoutService";
+import { print } from "../../../services/LoggingService";
 import { addNavigator } from "../../../utils/utilities";
+import ModalComponent from "../../ModalComponent/ModalComponent";
 
 import "./ModelGraphViewerCytoscapeComponent.scss";
 
@@ -153,7 +159,29 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
     return settingsService.getModelImage(modelId);
   }
 
+  saveLayout() {
+    storageService.saveModelsLayoutPositions(sessionService.getModelsLayoutPositions());
+    const msg = `${this.layout} layout saved`;
+    print(msg);
+    this.setState({ notificationMessageIsVisible: true, notificationMessage: msg });
+  }
+
+  clearLayout() {
+    layoutService.clearModelsLayout(this.layout);
+  }
+
+  showClearLayoutMessage() {
+    const msg = `${this.layout} layout cleared to default`;
+    print(msg);
+    this.setState({ notificationMessageIsVisible: true, notificationMessage: msg });
+  }
+
   doLayout(progressCallback) {
+    const currentLayoutPositions = sessionService.getCurrentModelsLayoutPositions(this.layout);
+    if (!currentLayoutPositions) {
+      const storagedPositions = storageService.getModelsLayoutPositions(this.layout);
+      sessionService.setInitialModelsLayoutPositions(this.layout, storagedPositions);
+    }
     const cy = this.graphControl;
     cy.batch(() => {
       const el = cy.nodes("*");
@@ -172,6 +200,9 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
           });
         }
       }
+    });
+    cy.on("dragfree", "node", evt => {
+      sessionService.saveModelsLayoutNodesPosition(this.layout, evt.target.id(), evt.target.position("x"), evt.target.position("y"));
     });
 
     return new Promise(resolve => {
@@ -610,38 +641,53 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
     this.graphControl.$id(nodeId).emit(event);
   }
 
+  onCloseModal = () => {
+    this.setState({ notificationMessageIsVisible: false, notificationMessage: "" });
+  }
+
   render() {
-    const { hideContextMenu } = this.state;
+    const { hideContextMenu, notificationMessageIsVisible, notificationMessage } = this.state;
     return (
-      <div style={{ position: "relative", height: "100%" }}>
-        <CytoscapeComponent elements={[]}
-          className={`graph-control ${hideContextMenu ? "hide-context" : ""}`}
-          stylesheet={graphStyles}
-          maxZoom={2}
-          cy={cy => {
-            if (this.graphControl !== cy) {
-              this.graphControl = cy;
-              addNavigator(this.graphControl, navigationOptions, "#model-graph-viewer-nav");
-              this.graphControl.dblclick();
-              this.graphControl.on("select", "node", this.onNodeSelected);
-              this.graphControl.on("unselect", "node", this.onNodeUnselected);
-              this.graphControl.on("select", "edge", this.onEdgeSelected);
-              this.graphControl.on("click", this.onControlClicked);
-              this.graphControl.on("dblclick", "node", this.onNodeDoubleClicked);
-              this.graphControl.on("mouseover", this.onNodeHover);
-              this.graphControl.on("mouseout", this.onNodeUnhover);
-              this.graphControl.on("mousedown", this.onNodeUnhover);
-              this.graphControl.on("zoom", this.onGraphZoom);
-              this.graphControl.on("cxttap", "edge", this.onEdgeRightClick);
-              this.graphControl.on("cxttap", "node", this.onNodeRightClick);
-              this.graphControl.on("cxttap", this.onControlRightClick);
-            }
-          }} />
-        <div className="navigator-container">
-          <div id="model-graph-viewer-nav" className="graph-navigator" role="presentation" />
+      <>
+        <div style={{ position: "relative", height: "100%" }}>
+          <CytoscapeComponent elements={[]}
+            className={`graph-control ${hideContextMenu ? "hide-context" : ""}`}
+            stylesheet={graphStyles}
+            maxZoom={2}
+            cy={cy => {
+              if (this.graphControl !== cy) {
+                this.graphControl = cy;
+                addNavigator(this.graphControl, navigationOptions, "#model-graph-viewer-nav");
+                this.graphControl.dblclick();
+                this.graphControl.on("select", "node", this.onNodeSelected);
+                this.graphControl.on("unselect", "node", this.onNodeUnselected);
+                this.graphControl.on("select", "edge", this.onEdgeSelected);
+                this.graphControl.on("click", this.onControlClicked);
+                this.graphControl.on("dblclick", "node", this.onNodeDoubleClicked);
+                this.graphControl.on("mouseover", this.onNodeHover);
+                this.graphControl.on("mouseout", this.onNodeUnhover);
+                this.graphControl.on("mousedown", this.onNodeUnhover);
+                this.graphControl.on("zoom", this.onGraphZoom);
+                this.graphControl.on("cxttap", "edge", this.onEdgeRightClick);
+                this.graphControl.on("cxttap", "node", this.onNodeRightClick);
+                this.graphControl.on("cxttap", this.onControlRightClick);
+              }
+            }} />
+          <div className="navigator-container">
+            <div id="model-graph-viewer-nav" className="graph-navigator" role="presentation" />
+          </div>
+          <div id="hidden-text-ruler" ref={this.hiddenTextRuler} />
         </div>
-        <div id="hidden-text-ruler" ref={this.hiddenTextRuler} />
-      </div>
+        <ModalComponent isVisible={notificationMessageIsVisible} className="pi-patch-modal">
+          <h2 className="heading-2">Layout Information</h2>
+          <div className="patch-json-data">
+            {notificationMessage}
+          </div>
+          <div className="btn-group">
+            <DefaultButton className="modal-button close-button" onClick={this.onCloseModal}>Close</DefaultButton>
+          </div>
+        </ModalComponent>
+      </>
     );
   }
 

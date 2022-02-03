@@ -592,6 +592,14 @@ class ModelGraphViewerComponent extends React.Component {
     this.updateProgress(100);
   }
 
+  onSaveLayoutClicked = () => this.cyRef.current.saveLayout();
+
+  onClearLayoutClicked = async () => {
+    this.cyRef.current.clearLayout();
+    await this.cyRef.current.doLayout(this.progressCallback);
+    this.cyRef.current.showClearLayoutMessage();
+  }
+
   onRelationshipsToggleKeyDown = e => {
     if (e.keyCode === TAB_KEY_CODE && e.shiftKey) {
       eventService.publishFocusModelViewer();
@@ -623,7 +631,9 @@ class ModelGraphViewerComponent extends React.Component {
               <ModelGraphViewerCommandBarComponent
                 className="gc-commandbar" buttonClass="gc-toolbarButtons"
                 layouts={Object.keys(ModelGraphViewerCytoscapeLayouts)} layout={layout}
-                onLayoutChanged={this.onLayoutChanged} />
+                onLayoutChanged={this.onLayoutChanged}
+                onSaveLayoutClicked={this.onSaveLayoutClicked}
+                onClearLayoutClicked={this.onClearLayoutClicked} />
             </div>
             <ModelGraphViewerCytoscapeComponent
               onNodeClicked={this.onNodeClicked}

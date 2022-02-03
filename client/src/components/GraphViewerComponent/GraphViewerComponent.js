@@ -92,6 +92,8 @@ class GraphViewerComponent extends React.Component {
     eventService.subscribeDeleteRelationship(data => data && this.onRelationshipDelete(data));
     eventService.subscribeCreateTwin(data => {
       this.cyRef.current.addTwins([ data ]);
+      this.cyRef.current.updateNodeColors();
+      this.cyRef.current.zoomToFit();
     });
     eventService.subscribeConfigure(evt => {
       if (evt.type === "end" && evt.config) {
@@ -483,6 +485,7 @@ class GraphViewerComponent extends React.Component {
     if (relationship) {
       this.cyRef.current.removeRelationships([ getUniqueRelationshipId(relationship) ]);
       await this.cyRef.current.doLayout();
+      this.setState({ selectedEdges: null });
     }
   }
 
@@ -490,6 +493,14 @@ class GraphViewerComponent extends React.Component {
     this.setState({ layout });
     this.cyRef.current.setLayout(layout);
     this.cyRef.current.doLayout();
+  }
+
+  onSaveLayoutClicked = () => this.cyRef.current.saveLayout();
+
+  onClearLayoutClicked = async () => {
+    this.cyRef.current.clearLayout();
+    await this.cyRef.current.doLayout(this.progressCallback);
+    this.cyRef.current.showClearLayoutMessage();
   }
 
   onTriggerHide = () => {
@@ -761,6 +772,8 @@ class GraphViewerComponent extends React.Component {
           onZoomToFitClicked={() => this.cyRef.current.zoomToFit()}
           onCenterClicked={() => this.cyRef.current.center()}
           onLayoutChanged={this.onLayoutChanged}
+          onSaveLayoutClicked={this.onSaveLayoutClicked}
+          onClearLayoutClicked={this.onClearLayoutClicked}
           onGetCurrentNodes={() => this.cyRef.current.graphControl.nodes()}
           setSelectedDisplayNameProperty={this.props.setSelectedDisplayNameProperty}
           selectedDisplayNameProperty={this.props.selectedDisplayNameProperty}
