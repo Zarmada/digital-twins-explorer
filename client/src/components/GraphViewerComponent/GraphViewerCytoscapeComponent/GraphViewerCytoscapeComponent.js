@@ -30,7 +30,9 @@ export class GraphViewerCytoscapeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hideContextMenu: false
+      hideContextMenu: false,
+      initialX: 100,
+      initialY: 100
     };
     this.graphControl = null;
     this.navControlId = _uniqueId("graph-viewer-nav");
@@ -233,6 +235,8 @@ export class GraphViewerCytoscapeComponent extends React.Component {
 
   addTwins(twins) {
     let isDisplayNameAsteriskPresent = false;
+    const { initialX, initialY } = this.state;
+    this.setState({ initialX: initialX + 50 });
     const mapped = twins
       .filter(twin => this.graphControl.$id(twin.$dtId).length === 0)
       .map(twin => {
@@ -247,6 +251,10 @@ export class GraphViewerCytoscapeComponent extends React.Component {
             properties: twin,
             modelId: twin.$metadata.$model,
             category: "Twin"
+          },
+          position: {
+            x: initialX,
+            y: initialY
           }
         });
       });
