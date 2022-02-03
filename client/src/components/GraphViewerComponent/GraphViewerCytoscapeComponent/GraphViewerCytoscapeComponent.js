@@ -497,13 +497,15 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     layoutService.clearGraphLayout(this.layout, this.query);
   }
 
-  doLayout() {
+  doCustomLayout() {
     const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, this.query);
     if (!currentLayoutPositions) {
       const storagedPositions = storageService.getGraphLayoutPositionsByQuery(this.layout, this.query);
       sessionService.setInitialGraphLayoutPositions(this.layout, this.query, storagedPositions);
     }
+  }
 
+  updateNodeColors() {
     const cy = this.graphControl;
     const modelColors = settingsService.getModelColors();
     cy.batch(() => {
@@ -543,7 +545,6 @@ export class GraphViewerCytoscapeComponent extends React.Component {
           });
         }
       }
-
       // Color relationships by label
       for (let i = 0; i < rels.length; i++) {
         rtypes[rels[i].data("label")] = `#${this.getColor(i)}`;
@@ -552,7 +553,11 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         cy.elements(`edge[label="${r}"]`).style("line-color", rtypes[r]);
       }
     });
+  }
 
+  doLayout() {
+    this.updateNodeColors();
+    const cy = this.graphControl;
     return new Promise(resolve => {
       const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
       layout.on("layoutstop", () => resolve());
