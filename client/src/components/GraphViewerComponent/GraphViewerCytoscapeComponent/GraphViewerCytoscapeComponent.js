@@ -539,6 +539,16 @@ export class GraphViewerCytoscapeComponent extends React.Component {
       const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
       layout.on("layoutstop", () => resolve());
       layout.run();
+      cy.nodes().forEach(node => {
+        const edgesWith = cy.nodes().edgesWith(node);
+        const edgesTo = cy.nodes().edgesTo(node);
+        const initialX = 0;
+        if ((edgesWith.length === 0) && (edgesTo.length === 0)) {
+          if (initialX < node.position().x) {
+            this.setState({ initialX: node.position().x + 50, initialY: node.position().y });
+          }
+        }
+      });
     });
   }
 
