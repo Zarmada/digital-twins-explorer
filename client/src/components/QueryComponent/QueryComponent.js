@@ -38,7 +38,7 @@ class QueryComponent extends Component {
       showConfirmOverwriteModal: false,
       newQueryName: "",
       isOverlayResultsChecked: false,
-      rowHeight: "20px",
+      rowHeight: "40px",
       displayEditor: false,
       monacoHolder: false
     };
@@ -52,7 +52,7 @@ class QueryComponent extends Component {
   onKeyFunction = event => {
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
-      this.setState({ monacoHolder: true, displayEditor: true, selectedQueryMultiline: event.target.value });
+      this.setState({ monacoHolder: true, displayEditor: true, selectedQueryMultiline: `${event.target.value}\n` });
     }
   }
 
@@ -87,6 +87,7 @@ class QueryComponent extends Component {
     this.setState({ selectedQueryMultiline: value, selectedQueryKey: null });
     let count = value.split("").filter(c => c === "\n").length;
     count = count > 20 ? 20 : count;
+    count = count < 2 ? 1 : count;
     this.setState({ rowHeight: `${(count + 1) * 19}px` });
   }
 
@@ -94,8 +95,12 @@ class QueryComponent extends Component {
     this.setState({ displayEditor: false, selectedQuery: evt.target.value.replaceAll("\n", " ") });
   }
 
-  handleEditorDidMount(editor) {
+  handleEditorDidMount(editor, monaco) {
     editor.focus();
+    monaco.editor.defineTheme("vs-dark-twins", {
+      base: "vs",
+      inherit: true
+    });
   }
 
   onChangeQueryName = evt => {
@@ -207,7 +212,7 @@ class QueryComponent extends Component {
 
     return (
       <>
-        {displayEditor && <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} >
+        <div className="qc-monaco-layer" onBlur={this.handleEditorBlur} style={{ display: displayEditor ? "block" : "none" }} >
           <Editor
             height={rowHeight}
             theme="vs-dark"
@@ -216,8 +221,8 @@ class QueryComponent extends Component {
             onChange={this.handleEditorChange}
             ref={this.monacoRef}
             onMount={this.handleEditorDidMount}
-            options={{ scrollBeyondLastLine: false }} />
-        </div> }
+            options={{ scrollBeyondLastLine: false, lineNumbers: "off", minimap: {enabled: false} }} />
+        </div>
         <div className="qc-grid">
           <div className="qc-queryBox">
             <div className="qc-label">
@@ -233,10 +238,10 @@ class QueryComponent extends Component {
                 }}
                 onChange={this.onSelectedQueryChange} />
             </div>
-            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
+            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField" style={{ display: displayEditor ? "none" : "block" }} >
               <form onSubmit={this.executeQuery}>
-                {!displayEditor && <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
-                  onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} /> }
+                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} />
               </form>
             </FocusZone>
             <div className="qc-queryControls">
