@@ -31,8 +31,8 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     super(props);
     this.state = {
       hideContextMenu: false,
-      initialX: 100,
-      initialY: 100
+      initialX: 0,
+      initialY: 0
     };
     this.graphControl = null;
     this.navControlId = _uniqueId("graph-viewer-nav");
@@ -539,16 +539,25 @@ export class GraphViewerCytoscapeComponent extends React.Component {
       const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
       layout.on("layoutstop", () => resolve());
       layout.run();
+      let initialX = 0;
+      let leftMostX = 0;
+      let topMostY = 0;
       cy.nodes().forEach(node => {
         const edgesWith = cy.nodes().edgesWith(node);
         const edgesTo = cy.nodes().edgesTo(node);
-        const initialX = 0;
         if ((edgesWith.length === 0) && (edgesTo.length === 0)) {
           if (initialX < node.position().x) {
+            initialX = node.position().x;
             this.setState({ initialX: node.position().x + 50, initialY: node.position().y });
           }
+        } else {
+          leftMostX = leftMostX > node.position().x ? node.position().x : leftMostX;
+          topMostY = topMostY > node.position().y ? node.position().y : topMostY;
         }
       });
+      if (initialX === 0) {
+        this.setState({ initialX: leftMostX - 50, initialY: topMostY - 50 });
+      }
     });
   }
 
