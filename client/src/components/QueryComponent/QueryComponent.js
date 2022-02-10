@@ -85,9 +85,7 @@ class QueryComponent extends Component {
 
   handleEditorChange = value => {
     this.setState({ selectedQueryMultiline: value, selectedQueryKey: null });
-    let count = value.split("").filter(c => c === "\n").length;
-    count = count > 20 ? 20 : count;
-    count = count < 2 ? 1 : count;
+    const count = Math.min(20, Math.max(1, value.split("").filter(c => c === "\n").length));
     this.setState({ rowHeight: `${(count + 1) * 19}px` });
   }
 
