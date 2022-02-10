@@ -10,7 +10,6 @@ import Editor from "@monaco-editor/react";
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
-import { dependencyProposalSegmentOne, dependencyProposalSegmentTwo, dependencyProposalSegmentThree } from "../../services/MonacoConstants";
 
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
