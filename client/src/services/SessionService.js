@@ -28,7 +28,8 @@ class SessionService {
 
   getCurrentGraphLayoutPositions = (layout, query) => {
     const encodedQuery = Buffer.from(query).toString("base64");
-    return this.graphLayouts[layout] ? this.graphLayouts[layout][encodedQuery] : null;
+    this.setInitialEmptyGraphLayout(layout, encodedQuery);
+    return this.graphLayouts[layout][encodedQuery];
   }
 
   setInitialGraphLayoutPositions = (layout, query, initialPositions) => {
@@ -42,17 +43,24 @@ class SessionService {
     }
   }
 
+  setInitialEmptyGraphLayout = (layout, encodedQuery) => {
+    if (!this.graphLayouts[layout]) {
+      this.graphLayouts[layout] = {};
+    }
+    if (!this.graphLayouts[layout][encodedQuery]) {
+      this.graphLayouts[layout][encodedQuery] = {};
+    }
+  }
+
   saveGraphLayoutNodesPosition = (layout, query, modelId, x, y) => {
     const encodedQuery = Buffer.from(query).toString("base64");
-    const modelData = {};
-    modelData[modelId] = { x, y };
-    if (this.graphLayouts[layout]) {
-      this.graphLayouts[layout][encodedQuery] = modelData;
-    } else {
-      const encodedQueryObj = {};
-      encodedQueryObj[encodedQuery] = modelData;
-      this.graphLayouts[layout] = encodedQueryObj;
-    }
+    this.setInitialEmptyGraphLayout(layout, encodedQuery);
+    this.graphLayouts[layout][encodedQuery][modelId] = { x, y};
+  }
+
+  getGraphLayoutNodesPosition = (layout, query, modelId) => {
+    const encodedQuery = Buffer.from(query).toString("base64");
+    return this.graphLayouts[layout][encodedQuery][modelId];
   }
 
   clearGraphLayout = (layout, query) => {

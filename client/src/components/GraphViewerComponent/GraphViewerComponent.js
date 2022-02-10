@@ -204,6 +204,7 @@ class GraphViewerComponent extends React.Component {
         eventService.publishError(exc);
       }
     }
+    this.cyRef.current.setQuery(query);
 
     this.setState({ isLoading: false, progress: 0 });
   }
@@ -281,7 +282,11 @@ class GraphViewerComponent extends React.Component {
 
       const twinsChunks = this.modelService.chunkModelsList(currentTwins, 100);
       const bs = new BatchService({
-        refresh: () => this.cyRef.current.doLayout(),
+        refresh: async () => {
+          await this.cyRef.current.doLayout();
+          await this.cyRef.current.saveSessionLayout();
+          await this.cyRef.current.loadSessionLayout();
+        },
         update: p => this.updateProgress(baseline + (i * baselineChunk) + ((p / 100) * baselineChunk)),
         items: twinsChunks,
         action: (twinsList, resolve, reject) => {
@@ -489,10 +494,12 @@ class GraphViewerComponent extends React.Component {
     }
   }
 
-  onLayoutChanged = layout => {
+  onLayoutChanged = async layout => {
     this.setState({ layout });
     this.cyRef.current.setLayout(layout);
-    this.cyRef.current.doLayout();
+    await this.cyRef.current.doLayout();
+    await this.cyRef.current.saveSessionLayout();
+    await this.cyRef.current.loadSessionLayout();
   }
 
   onSaveLayoutClicked = () => this.cyRef.current.saveLayout();
