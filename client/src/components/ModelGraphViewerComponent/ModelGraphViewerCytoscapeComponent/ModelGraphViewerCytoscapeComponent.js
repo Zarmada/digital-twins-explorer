@@ -211,22 +211,24 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
     });
   }
 
-  sessionLayout() {
+  saveSessionLayout() {
     const cy = this.graphControl;
     const el = cy.nodes("*");
     const currentLayoutPositions = sessionService.getCurrentModelsLayoutPositions(this.layout);
     if (Object.keys(currentLayoutPositions).length === 0) {
-      for (let i = 0; i < el.length; i++) {
-        if (!currentLayoutPositions[el[i].data("id")]) {
-          sessionService.saveModelsLayoutNodesPosition(this.layout, el[i].data("id"), el[i].position("x"), el[i].position("y"));
-        }
-      }
-    } else {
-      for (let i = 0; i < el.length; i++) {
-        const position = sessionService.getCurrentNodePositions(this.layout, el[i].data("id"));
-        el[i].position(position);
-      }
+      el.forEach(node => {
+        sessionService.saveModelsLayoutNodesPosition(this.layout, node.data("id"), node.position("x"), node.position("y"));
+      });
     }
+  }
+
+  loadSessionLayout() {
+    const cy = this.graphControl;
+    const el = cy.nodes("*");
+    el.forEach(node => {
+      const position = sessionService.getCurrentNodePositions(this.layout, node.data("id"));
+      node.position(position);
+    });
   }
 
   setLayout(layout) {
