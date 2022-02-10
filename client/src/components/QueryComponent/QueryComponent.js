@@ -10,6 +10,7 @@ import Editor from "@monaco-editor/react";
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
+import { dependencyProposalSegmentOne, dependencyProposalSegmentTwo, dependencyProposalSegmentThree } from "../../services/MonacoConstants";
 
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
@@ -18,6 +19,7 @@ import { ConfirmQueryDialogComponent } from "./ConfirmQueryDialogComponent/Confi
 const defaultQuery = "SELECT * FROM digitaltwins";
 
 const ENTER_KEY_CODE = 13;
+
 class QueryComponent extends Component {
 
   queryOptions = [

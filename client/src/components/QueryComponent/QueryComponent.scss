@@ -311,3 +311,10 @@
   overflow: hidden;
   background-color: transparent;
 }
+
+.suggest-widget {
+    position: fixed !important;
+    margin-top: 100px;
+    margin-left: 220px;
+    z-index: 200;
+}
