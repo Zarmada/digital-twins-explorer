@@ -470,6 +470,7 @@ class GraphViewerComponent extends React.Component {
   onRelationshipCreate = relationship => {
     if (relationship) {
       this.cyRef.current.addRelationships([ relationship ]);
+      this.cyRef.current.updateNodeColors();
       this.setState({ selectedNode: null, selectedNodes: null });
       this.cyRef.current.unselectSelectedNodes();
       this.cyRef.current.clearSelection();
