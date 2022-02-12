@@ -44,7 +44,6 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     this.selectedNodes = [];
     this.selectedOutsideComponent = [];
     this.layout = "Klay";
-    this.query = "";
     this.isSelectingOnOverlay = false;
     this.isFetchingTwinData = false;
     this.canRenderPopper = false;
@@ -566,32 +565,28 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     });
   }
 
-  saveSessionLayout() {
+  saveSessionLayoutIfNoneExists(query) {
     const cy = this.graphControl;
     const el = cy.nodes("*");
-    const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, this.query);
+    const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, query);
     if (Object.keys(currentLayoutPositions).length === 0) {
       el.forEach(node => {
-        sessionService.saveGraphLayoutNodesPosition(this.layout, this.query, node.data("id"), node.position("x"), node.position("y"));
+        sessionService.saveGraphLayoutNodesPosition(this.layout, query, node.data("id"), node.position("x"), node.position("y"));
       });
     }
   }
 
-  loadSessionLayout() {
+  loadSessionLayout(query) {
     const cy = this.graphControl;
     const el = cy.nodes("*");
     el.forEach(node => {
-      const position = sessionService.getGraphLayoutNodesPosition(this.layout, this.query, node.data("id"));
+      const position = sessionService.getGraphLayoutNodesPosition(this.layout, query, node.data("id"));
       node.position(position);
     });
   }
 
   setLayout(layout) {
     this.layout = layout;
-  }
-
-  setQuery(query) {
-    this.query = query;
   }
 
   updateModelIcon(modelId) {
