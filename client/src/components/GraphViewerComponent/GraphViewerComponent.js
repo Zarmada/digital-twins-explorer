@@ -281,7 +281,10 @@ class GraphViewerComponent extends React.Component {
 
       const twinsChunks = this.modelService.chunkModelsList(currentTwins, 100);
       const bs = new BatchService({
-        refresh: () => this.cyRef.current.doLayout(),
+        refresh: () => {
+          this.cyRef.current.doLayout();
+          this.cyRef.current.setNewNodesInitialPositions();
+        },
         update: p => this.updateProgress(baseline + (i * baselineChunk) + ((p / 100) * baselineChunk)),
         items: twinsChunks,
         action: (twinsList, resolve, reject) => {
@@ -493,6 +496,7 @@ class GraphViewerComponent extends React.Component {
     this.setState({ layout });
     this.cyRef.current.setLayout(layout);
     this.cyRef.current.doLayout();
+    this.cyRef.current.setNewNodesInitialPositions();
   }
 
   onTriggerHide = () => {

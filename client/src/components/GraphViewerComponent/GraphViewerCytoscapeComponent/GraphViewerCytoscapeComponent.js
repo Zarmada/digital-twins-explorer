@@ -539,30 +539,35 @@ export class GraphViewerCytoscapeComponent extends React.Component {
       const layout = cy.layout(GraphViewerCytoscapeLayouts[this.layout]);
       layout.on("layoutstop", () => resolve());
       layout.run();
-      let initialX = 0;
-      let leftMostX = 0;
-      let topMostY = 0;
-      cy.nodes().forEach(node => {
-        const edgesWith = cy.nodes().edgesWith(node);
-        const edgesTo = cy.nodes().edgesTo(node);
-        if ((edgesWith.length === 0) && (edgesTo.length === 0)) {
-          if (initialX < node.position().x) {
-            initialX = node.position().x;
-            this.setState({ initialX: node.position().x + 50, initialY: node.position().y });
-          }
-        } else {
-          leftMostX = leftMostX > node.position().x ? node.position().x : leftMostX;
-          topMostY = topMostY > node.position().y ? node.position().y : topMostY;
-        }
-      });
-      if (initialX === 0) {
-        this.setState({ initialX: leftMostX - 50, initialY: topMostY - 50 });
-      }
     });
   }
 
   setLayout(layout) {
     this.layout = layout;
+  }
+
+  setNewNodesInitialPositions() {
+    const cy = this.graphControl;
+    let initialX = 0;
+    let initialY = 0;
+    let leftMostX = 0;
+    let topMostY = 0;
+    cy.nodes().forEach(node => {
+      if (node.degree() === 0) {
+        if (initialX < node.position().x) {
+          initialX = node.position().x;
+          initialY = node.position().y;
+        }
+      } else {
+        leftMostX = leftMostX > node.position().x ? node.position().x : leftMostX;
+        topMostY = topMostY > node.position().y ? node.position().y : topMostY;
+      }
+    });
+    if (initialX === 0) {
+      this.setState({ initialX: leftMostX - 50, initialY: topMostY - 50 });
+    } else {
+      this.setState({ initialX: initialX + 50, initialY });
+    }
   }
 
   updateModelIcon(modelId) {
