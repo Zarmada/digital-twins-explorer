@@ -10,7 +10,6 @@ import Editor from "@monaco-editor/react";
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
-import { dependencyProposalSegmentOne, dependencyProposalSegmentTwo, dependencyProposalSegmentThree } from "../../services/MonacoConstants";
 
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
@@ -40,7 +39,7 @@ class QueryComponent extends Component {
       showConfirmOverwriteModal: false,
       newQueryName: "",
       isOverlayResultsChecked: false,
-      rowHeight: "20px",
+      rowHeight: "40px",
       displayEditor: false,
       monacoHolder: false
     };
@@ -54,7 +53,7 @@ class QueryComponent extends Component {
   onKeyFunction = event => {
     const enterPressed = event.key === "Enter";
     if (event.shiftKey && enterPressed) {
-      this.setState({ monacoHolder: true, displayEditor: true, selectedQueryMultiline: event.target.value });
+      this.setState({ monacoHolder: true, displayEditor: true, selectedQueryMultiline: `${event.target.value}\n` });
     }
   }
 
@@ -87,8 +86,7 @@ class QueryComponent extends Component {
 
   handleEditorChange = value => {
     this.setState({ selectedQueryMultiline: value, selectedQueryKey: null });
-    let count = value.split("").filter(c => c === "\n").length;
-    count = count > 20 ? 20 : count;
+    const count = Math.min(20, Math.max(1, value.split("").filter(c => c === "\n").length));
     this.setState({ rowHeight: `${(count + 1) * 19}px` });
   }
 
@@ -98,20 +96,9 @@ class QueryComponent extends Component {
 
   handleEditorDidMount(editor, monaco) {
     editor.focus();
-    const createDependencyProposals = (range, kind) => [ ...dependencyProposalSegmentOne(range, kind), ...dependencyProposalSegmentTwo(range, kind), ...dependencyProposalSegmentThree(range, kind) ];
-    monaco.languages.registerCompletionItemProvider("sql", {
-      provideCompletionItems: (model, position) => {
-        const word = model.getWordUntilPosition(position);
-        const range = {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: word.startColumn,
-          endColumn: word.endColumn
-        };
-        return {
-          suggestions: createDependencyProposals(range, monaco.languages.CompletionItemKind.Function)
-        };
-      }
+    monaco.editor.defineTheme("vs-dark-twins", {
+      base: "vs",
+      inherit: true
     });
   }
 
@@ -233,7 +220,7 @@ class QueryComponent extends Component {
             onChange={this.handleEditorChange}
             ref={this.monacoRef}
             onMount={this.handleEditorDidMount}
-            options={{ scrollBeyondLastLine: false }} />
+            options={{ scrollBeyondLastLine: false, lineNumbers: "off", minimap: {enabled: false} }} />
         </div>
         <div className="qc-grid">
           <div className="qc-queryBox">
@@ -250,10 +237,10 @@ class QueryComponent extends Component {
                 }}
                 onChange={this.onSelectedQueryChange} />
             </div>
-            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField">
+            <FocusZone handleTabKey={FocusZoneTabbableElements.all} defaultActiveElement="#queryField" style={{ display: displayEditor ? "none" : "block" }} >
               <form onSubmit={this.executeQuery}>
-                {!displayEditor && <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
-                  onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} /> }
+                <TextField id="queryField" className="qc-query" styles={this.getStyles} role="search" value={selectedQuery} onChange={this.onChange} ariaLabel="Enter a query"
+                  onKeyDown={this.onKeyFunction} onFocus={this.onFocusGained} />
               </form>
             </FocusZone>
             <div className="qc-queryControls">

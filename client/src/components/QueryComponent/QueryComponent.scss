@@ -303,17 +303,18 @@
 
 .qc-monaco-layer {
   width: calc(100% - 535px);
-  margin-top: 50px;
+  margin-top: 40px;
   margin-left: 225px;
   position: fixed;
   float: left;
   z-index: 10;
   overflow: hidden;
+  background-color: transparent;
 }
 
 .suggest-widget {
-  position: fixed !important;
-  margin-top: 100px;
-  margin-left: 220px;
-  z-index: 200;
+    position: fixed !important;
+    margin-top: 100px;
+    margin-left: 220px;
+    z-index: 200;
 }
