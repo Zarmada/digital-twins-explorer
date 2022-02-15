@@ -283,7 +283,6 @@ class GraphViewerComponent extends React.Component {
       const bs = new BatchService({
         refresh: () => {
           this.cyRef.current.doLayout();
-          this.cyRef.current.setNewNodesInitialPositions();
         },
         update: p => this.updateProgress(baseline + (i * baselineChunk) + ((p / 100) * baselineChunk)),
         items: twinsChunks,
@@ -336,6 +335,7 @@ class GraphViewerComponent extends React.Component {
       });
 
       await bs.run();
+      this.cyRef.current.setNewNodesInitialPositions();
       eventService.publishGraphRelationships(this.relationships);
     }
 
