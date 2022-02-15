@@ -565,26 +565,6 @@ export class GraphViewerCytoscapeComponent extends React.Component {
     });
   }
 
-  saveSessionLayoutIfNoneExists(query) {
-    const cy = this.graphControl;
-    const el = cy.nodes("*");
-    const currentLayoutPositions = sessionService.getCurrentGraphLayoutPositions(this.layout, query);
-    if (Object.keys(currentLayoutPositions).length === 0) {
-      el.forEach(node => {
-        sessionService.saveGraphLayoutNodesPosition(this.layout, query, node.data("id"), node.position("x"), node.position("y"));
-      });
-    }
-  }
-
-  loadSessionLayout(query) {
-    const cy = this.graphControl;
-    const el = cy.nodes("*");
-    el.forEach(node => {
-      const position = sessionService.getGraphLayoutNodesPosition(this.layout, query, node.data("id"));
-      node.position(position);
-    });
-  }
-
   setLayout(layout) {
     this.layout = layout;
   }

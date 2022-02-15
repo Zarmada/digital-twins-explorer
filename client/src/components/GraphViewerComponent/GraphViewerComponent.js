@@ -52,8 +52,7 @@ class GraphViewerComponent extends React.Component {
       highlightedNodes: [],
       filteredNodes: [],
       noResults: false,
-      isDisplayNameAsteriskPresent: false,
-      query: ""
+      isDisplayNameAsteriskPresent: false
     };
     this.view = React.createRef();
     this.create = React.createRef();
@@ -282,12 +281,7 @@ class GraphViewerComponent extends React.Component {
 
       const twinsChunks = this.modelService.chunkModelsList(currentTwins, 100);
       const bs = new BatchService({
-        refresh: async () => {
-          const { query } = this.state;
-          await this.cyRef.current.doLayout();
-          await this.cyRef.current.saveSessionLayoutIfNoneExists(query);
-          await this.cyRef.current.loadSessionLayout(query);
-        },
+        refresh: () => this.cyRef.current.doLayout(),
         update: p => this.updateProgress(baseline + (i * baselineChunk) + ((p / 100) * baselineChunk)),
         items: twinsChunks,
         action: (twinsList, resolve, reject) => {
@@ -495,13 +489,10 @@ class GraphViewerComponent extends React.Component {
     }
   }
 
-  onLayoutChanged = async layout => {
-    const { query } = this.state;
+  onLayoutChanged = layout => {
     this.setState({ layout });
     this.cyRef.current.setLayout(layout);
-    await this.cyRef.current.doLayout();
-    await this.cyRef.current.saveSessionLayoutIfNoneExists(query);
-    await this.cyRef.current.loadSessionLayout(query);
+    this.cyRef.current.doLayout();
   }
 
   onSaveLayoutClicked = () => this.cyRef.current.saveLayout();
