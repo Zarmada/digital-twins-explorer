@@ -334,6 +334,7 @@ class CachedApiService extends ApiService {
   async queryModels(bypassCache = false) {
     if (!settingsService.caching || bypassCache) {
       this.clearCache();
+      debugger; //eslint-disable-line
       return await super.queryModels();
     }
 
