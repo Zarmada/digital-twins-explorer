@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import React, { Component } from "react";
-import { TextField, DefaultButton, Dropdown, IconButton, Label } from "office-ui-fabric-react";
+import { TextField, DefaultButton, Dropdown, IconButton, MessageBar, MessageBarType } from "office-ui-fabric-react";
 import { v4 as uuidv4 } from "uuid";
 
 import ModalComponent from "../../ModalComponent/ModalComponent";
@@ -13,7 +13,6 @@ import { eventService } from "../../../services/EventService";
 import { ModelService } from "../../../services/ModelService";
 
 const swapIconName = "SwapRelationship";
-const warningIconName = "WarningRelationship";
 export class GraphViewerRelationshipCreateComponent extends Component {
 
   constructor(props) {
@@ -164,16 +163,22 @@ export class GraphViewerRelationshipCreateComponent extends Component {
               errorMessage={hasRequiredRelError ? "Please select a relationship" : null}
               onChange={this.onSelectedRelChange} />
           </div>
-        } {
-          !hasRelationships && <div className="warning-icon-wrapper">
-            <div className="warning-icon">
-              <IconButton iconOnly="true" iconProps={{ iconName: warningIconName }} title="Warning Relationship" ariaLabel="Warning  Relationship" />
-            </div>
-            <div className="warning-text">
-              <Label className="warning-label">No relationship available, try swapping source and target</Label>
-            </div>
-          </div>
         }
+        { !hasRelationships && <MessageBar
+          aria-label="Warning  Relationship"
+          className="ms-MessageBar-Relationship"
+          messageBarType={MessageBarType.error}
+          role="alert"
+          styles={{
+            root: {
+              position: "absolute",
+              top: 0,
+              zIndex: 1
+            }
+          }}
+          isMultiline>
+          No relationship available, try swapping source and target
+        </MessageBar>}
         <div className="btn-group">
           <DefaultButton className="modal-button save-button" onClick={this.save} disabled={!hasRelationships}>Save</DefaultButton>
           <DefaultButton className="modal-button cancel-button" onClick={this.cancel}>Cancel</DefaultButton>
