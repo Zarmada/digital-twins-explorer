@@ -177,18 +177,13 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
   }
 
   doLayout(progressCallback) {
-    const currentLayoutPositions = sessionService.getCurrentModelsLayoutPositions(this.layout);
-    if (!currentLayoutPositions) {
-      const storagedPositions = storageService.getModelsLayoutPositions(this.layout);
-      sessionService.setInitialModelsLayoutPositions(this.layout, storagedPositions);
-    }
     const cy = this.graphControl;
     cy.batch(() => {
       const el = cy.nodes("*");
-      // Add model images
       for (let i = 0; i < el.length; i++) {
         const modelId = el[i].data("id");
         const backgroundImage = this.getBackgroundImage(modelId);
+        // Add model images
         if (backgroundImage) {
           cy.elements(`node[id="${modelId}"]`).style({
             "background-image": `url(${backgroundImage})`,
@@ -213,6 +208,26 @@ export class ModelGraphViewerCytoscapeComponent extends React.Component {
       const layout = cy.layout(options);
       layout.on("layoutstop", () => resolve());
       layout.run();
+    });
+  }
+
+  saveSessionLayout() {
+    const cy = this.graphControl;
+    const el = cy.nodes("*");
+    const currentLayoutPositions = sessionService.getCurrentModelsLayoutPositions(this.layout);
+    if (Object.keys(currentLayoutPositions).length === 0) {
+      el.forEach(node => {
+        sessionService.saveModelsLayoutNodesPosition(this.layout, node.data("id"), node.position("x"), node.position("y"));
+      });
+    }
+  }
+
+  loadSessionLayout() {
+    const cy = this.graphControl;
+    const el = cy.nodes("*");
+    el.forEach(node => {
+      const position = sessionService.getCurrentNodePositions(this.layout, node.data("id"));
+      node.position(position);
     });
   }
 

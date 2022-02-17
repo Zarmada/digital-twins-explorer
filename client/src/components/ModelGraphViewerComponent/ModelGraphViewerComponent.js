@@ -133,6 +133,8 @@ class ModelGraphViewerComponent extends React.Component {
       this.cyRef.current.addRelationships(this.componentRelationships, "component");
       this.cyRef.current.addRelationships(this.extendRelationships, "extends");
       await this.cyRef.current.doLayout(this.progressCallback);
+      this.cyRef.current.saveSessionLayoutIfNoneExists();
+      this.cyRef.current.loadSessionLayout();
     }
 
     this.updateProgress(100);
@@ -589,6 +591,8 @@ class ModelGraphViewerComponent extends React.Component {
     this.cyRef.current.setLayout(layout);
     this.updateProgress(0);
     await this.cyRef.current.doLayout(this.progressCallback);
+    await this.cyRef.current.saveSessionLayoutIfNoneExists();
+    await this.cyRef.current.loadSessionLayout();
     this.updateProgress(100);
   }
 

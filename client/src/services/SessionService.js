@@ -9,7 +9,14 @@ class SessionService {
 
   getModelsLayoutPositions = () => this.modelsLayouts
 
-  getCurrentModelsLayoutPositions = layout => this.modelsLayouts[layout]
+  getCurrentModelsLayoutPositions = layout => {
+    if (!this.modelsLayouts[layout]) {
+      this.modelsLayouts[layout] = {};
+    }
+    return this.modelsLayouts[layout];
+  }
+
+  getCurrentNodePositions = (layout, modelId) => this.modelsLayouts[layout][modelId];
 
   setInitialModelsLayoutPositions = (layout, initialPositions) => {
     this.modelsLayouts[layout] = initialPositions;
