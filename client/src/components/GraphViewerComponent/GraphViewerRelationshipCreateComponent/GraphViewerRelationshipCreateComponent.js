@@ -164,7 +164,7 @@ export class GraphViewerRelationshipCreateComponent extends Component {
               onChange={this.onSelectedRelChange} />
           </div>
         }
-        { !hasRelationships && <MessageBar
+        { !hasRelationships && <div className="div-MessageBar-Relationship"><MessageBar
           aria-label="Warning  Relationship"
           className="ms-MessageBar-Relationship"
           messageBarType={MessageBarType.error}
@@ -178,7 +178,7 @@ export class GraphViewerRelationshipCreateComponent extends Component {
           }}
           isMultiline>
           No relationship available, try swapping source and target
-        </MessageBar>}
+        </MessageBar></div>}
         <div className="btn-group">
           <DefaultButton className="modal-button save-button" onClick={this.save} disabled={!hasRelationships}>Save</DefaultButton>
           <DefaultButton className="modal-button cancel-button" onClick={this.cancel}>Cancel</DefaultButton>
