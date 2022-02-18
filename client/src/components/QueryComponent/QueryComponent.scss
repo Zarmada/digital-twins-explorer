@@ -303,14 +303,33 @@
 
 .qc-monaco-layer {
   width: calc(100% - 535px);
-  margin-top: 40px;
+  margin-top: 42px;
   margin-left: 225px;
   position: fixed;
   float: left;
   z-index: 10;
   overflow: hidden;
-  background-color: transparent;
+  background-color: var(--input-color);
+  border-color:rgb(208, 208, 208);
+  border-width:1px;
+  border-style: solid;
+  box-shadow: none;
+  box-sizing:border-box;
+  padding: 0px;
 }
+
+.monaco-editor-background {
+  background-color: var(--input-color)  !important;
+  margin-top: 5px;
+}
+
+.overflow-guard {
+  background-color: var(--input-color);
+}
+
+.monaco-editor .margin {
+  background-color: var(--input-color) !important;
+} 
 
 .suggest-widget {
     position: fixed !important;
