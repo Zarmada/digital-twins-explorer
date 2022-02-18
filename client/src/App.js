@@ -290,7 +290,7 @@ class App extends Component {
       let downloadLink = document.createElement("a");
       downloadLink.setAttribute("href", downloadUrl);
       downloadLink.setAttribute("download", "Datamodel");
-      downloadLink.style.visibility = 'hidden';
+      downloadLink.style.visibility = "hidden";
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
