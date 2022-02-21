@@ -289,7 +289,7 @@ class App extends Component {
       const downloadUrl = URL.createObjectURL(blob);
       let downloadLink = document.createElement("a");
       downloadLink.setAttribute("href", downloadUrl);
-      downloadLink.setAttribute("download", "Datamodel");
+      downloadLink.setAttribute("download", "ExportedGraph");
       downloadLink.style.visibility = "hidden";
       document.body.appendChild(downloadLink);
       downloadLink.click();
