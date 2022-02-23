@@ -18,7 +18,6 @@ const deleteModel = jest.spyOn(apiService, "deleteModel");
 const uploadModel = jest.spyOn(apiService, "addModels");
 const addTwin = jest.spyOn(apiService, "addTwin");
 const getModel = jest.spyOn(apiService, "getModelById");
-const deleteAllModel = jest.spyOn(modelService, "deleteAll");
 
 const models = [
   {
@@ -172,18 +171,20 @@ test("delete model", async () => {
 test("delete all models", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  modelService.deleteAll.mockResolvedValue(mockSuccesResponse);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  ModelService.prototype.deleteAll.mockResolvedValue(mockSuccesResponse);
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const button = await findByLabelText(container, "modelViewerCommandBarComponent.farItems.deleteModels.ariaLabel");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   await findByText(container, "Are you sure?");
   const deleteButton = container.querySelector(".save-button");
   act(() => {
-    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  expect(deleteAllModel).toHaveBeenCalledTimes(0);
+  expect(ModelService.prototype.deleteAll.mock.calls.length).toBe(1);
 });
