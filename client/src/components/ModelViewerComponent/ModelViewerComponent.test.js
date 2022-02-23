@@ -3,15 +3,18 @@ import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import { findByText, findByLabelText, waitFor, findByTestId, fireEvent, screen } from "@testing-library/react";
 import user from '@testing-library/user-event';
+import PubSub from "pubsub-js";
 import ModelViewerComponent from "./ModelViewerComponent";
 import { apiService } from "../../services/ApiService";
 import { configService } from "../../services/ConfigService";
+import { eventService } from "../../services/EventService";
 import { ModelService } from "../../services/ModelService";
 import { ConsoleComponent } from "../ConsoleComponent/ConsoleComponent";
 
 jest.mock("../../services/ApiService");
 jest.mock("../../services/ConfigService");
 jest.mock("../../services/ModelService");
+jest.mock("../../services/EventService");
 
 const retrieveModels = jest.spyOn(apiService, "queryModels");
 const deleteModel = jest.spyOn(apiService, "deleteModel");
@@ -108,6 +111,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  PubSub.clearAllSubscriptions();
   unmountComponentAtNode(container);
   container.remove();
   container = null;
@@ -166,6 +170,7 @@ test("delete model", async () => {
     confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
   expect(deleteModel).toHaveBeenCalledTimes(1);
+  await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
 });
 
 test("create a twin", async () => {
@@ -188,6 +193,7 @@ test("create a twin", async () => {
     confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
   expect(deleteModel).toHaveBeenCalledTimes(1);
+  await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
 });
 
 test("delete all models", async () => {
