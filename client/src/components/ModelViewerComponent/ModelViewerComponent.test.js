@@ -168,6 +168,28 @@ test("delete model", async () => {
   expect(deleteModel).toHaveBeenCalledTimes(1);
 });
 
+test("create a twin", async () => {
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
+  apiService.queryModels.mockResolvedValue(models);
+  apiService.deleteModel.mockResolvedValue(modelData);
+  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+
+  await findByText(container, "Floor");
+  const button = container.querySelector(".ms-CommandBar-overflowButton");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.deleteModels");
+  act(() => {
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const confirm = await screen.getByTestId("confirm");
+  act(() => {
+    confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  expect(deleteModel).toHaveBeenCalledTimes(1);
+});
+
 test("delete all models", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
