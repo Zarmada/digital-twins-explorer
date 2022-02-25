@@ -24,7 +24,7 @@ import { TwinViewerComponent } from "./components/TwinViewerComponent/TwinViewer
 import { OutputComponent } from "./components/OutputComponent/OutputComponent";
 import QueryComponent from "./components/QueryComponent/QueryComponent";
 import { ImportComponent } from "./components/ImportComponent/ImportComponent";
-import { TabularViewComponent } from "./components/TabularViewComponent/TabularViewComponent";
+import TabularViewComponent from "./components/TabularViewComponent/TabularViewComponent";
 import { ConsoleComponent } from "./components/ConsoleComponent/ConsoleComponent";
 import AppCommandBar from "./components/AppCommandBar/AppCommandBar";
 import { ErrorMessageComponent } from "./components/ErrorMessageComponent/ErrorMessage";

@@ -1,7 +1,11 @@
 {
     "app": {
         "tabularViewComponentConfig": {
-            "title": "RELATIONSHIPS"
+            "title": "RELATIONSHIPS",
+            "name": "Name",
+            "source": "Source",
+            "target": "Target",
+            "relationshipID": "Relationship ID"
         },
         "goldenLayoutConfig": {
             "queryComponent": "QUERY EXPLORER",

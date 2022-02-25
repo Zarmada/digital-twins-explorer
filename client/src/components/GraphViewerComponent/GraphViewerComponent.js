@@ -52,8 +52,7 @@ class GraphViewerComponent extends React.Component {
       highlightedNodes: [],
       filteredNodes: [],
       noResults: false,
-      isDisplayNameAsteriskPresent: false,
-      relationships: []
+      isDisplayNameAsteriskPresent: false
     };
     this.view = React.createRef();
     this.create = React.createRef();
@@ -246,7 +245,8 @@ class GraphViewerComponent extends React.Component {
             this.setState({ couldNotDisplay: true });
           }
         } else if (data.relationships.length > 0) {
-          this.setState({ couldNotDisplay: true, relationshipsOnly: true, relationships: data.relationships });
+          this.setState({ couldNotDisplay: true, relationshipsOnly: true });
+          this.relationships = data.relationships;
         } else if (data.other.length > 0) {
           this.setState({ couldNotDisplay: true, relationshipsOnly: false });
         } else {
@@ -856,7 +856,7 @@ class GraphViewerComponent extends React.Component {
   render() {
     const { isLoading, progress, filterIsOpen, propertyInspectorIsOpen,
       overlayResults, overlayItems, propInspectorDetailWidth, couldNotDisplay, relationshipsOnly,
-      outputIsOpen, highlightingTerms, filteringTerms, filteredNodes, highlightedNodes, noResults, selectedNodes, relationships } = this.state;
+      outputIsOpen, highlightingTerms, filteringTerms, filteredNodes, highlightedNodes, noResults, selectedNodes } = this.state;
     return (
       <div className={`gvc-wrap ${propertyInspectorIsOpen ? "pi-open" : "pi-closed"}`}>
         <div className={`gc-grid ${filterIsOpen ? "open" : "closed"}`}>
@@ -896,7 +896,7 @@ class GraphViewerComponent extends React.Component {
                       ? <><span>A graph may only be rendered if the results contain a twin. </span>
                         <span>Click here to open the</span>
                         <a onClick={() => {
-                          eventService.publishOpenTabularView(relationships);
+                          eventService.publishOpenTabularView(this.relationships);
                           this.setState({ couldNotDisplay: false });
                         }}>Tabular Relationships View</a></>
                       : <span>The query returned results that could not be displayed or overlayed. </span>}

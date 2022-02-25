@@ -4,8 +4,10 @@
 import React, { Component } from "react";
 import { DetailsList, SelectionMode } from "@fluentui/react/lib/DetailsList";
 import LoaderComponent from "../LoaderComponent/LoaderComponent";
+import { withTranslation } from "react-i18next";
 
 import "./TabularViewComponent.scss";
+
 
 export class TabularViewComponent extends Component {
 
@@ -13,9 +15,43 @@ export class TabularViewComponent extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      items: this.generateItems(),
-      columns: this.generateColumns()
+      items: this.generateItems()
     };
+    this.columns = [
+      {
+        key: "nameColumn",
+        fieldName: "name",
+        name: props.t("app.tabularViewComponentConfig.name"),
+        data: "string",
+        minWidth: 200,
+        maxWidth: 200,
+        isPadded: true
+      }, {
+        key: "sourceColumn",
+        fieldName: "source",
+        name: props.t("app.tabularViewComponentConfig.source"),
+        data: "string",
+        minWidth: 200,
+        maxWidth: 200,
+        isPadded: true
+      }, {
+        key: "targetColumn",
+        fieldName: "target",
+        name: props.t("app.tabularViewComponentConfig.target"),
+        data: "string",
+        minWidth: 200,
+        maxWidth: 200,
+        isPadded: true
+      }, {
+        key: "idColumn",
+        fieldName: "id",
+        name: "Relationship ID",
+        data: props.t("app.tabularViewComponentConfig.relationshipID"),
+        minWidth: 200,
+        maxWidth: 200,
+        isPadded: true
+      }
+    ];
   }
 
   componentDidMount = () => {
@@ -23,67 +59,35 @@ export class TabularViewComponent extends Component {
   }
 
   generateItems = () => {
-    const items = [];
-    this.props.relationships.forEach(element => {
-      const item = {};
-      item.name = element.$relationshipName;
-      item.source = element.$sourceId;
-      item.target = element.$targetId;
-      item.id = element.$relationshipId;
-      items.push(item);
-    });
+    const items = this.props.relationships
+      ? this.props.relationships.map(element => {
+        const item = {
+          name: element.$relationshipName,
+          source: element.$sourceId,
+          target: element.$targetId,
+          id: element.$relationshipId
+        };
+        return item;
+      })
+      : [];
     return items;
   }
 
-  generateColumns = () => [
-    {
-      key: "nameColumn",
-      fieldName: "name",
-      name: "Name",
-      data: "string",
-      minWidth: 200,
-      maxWidth: 200,
-      isPadded: true
-    }, {
-      key: "sourceColumn",
-      fieldName: "source",
-      name: "Source",
-      data: "string",
-      minWidth: 200,
-      maxWidth: 200,
-      isPadded: true
-    }, {
-      key: "targetColumn",
-      fieldName: "target",
-      name: "Target",
-      data: "string",
-      minWidth: 200,
-      maxWidth: 200,
-      isPadded: true
-    }, {
-      key: "idColumn",
-      fieldName: "id",
-      name: "Relationship ID",
-      data: "string",
-      minWidth: 200,
-      maxWidth: 200,
-      isPadded: true
-    }
-  ]
-
   render() {
-    const { isLoading, items, columns } = this.state;
+    const { isLoading, items } = this.state;
     return (
       <div className="ev-grid">
         <DetailsList
           items={items}
-          columns={columns}
+          columns={this.columns}
           isHeaderVisible
           selectionMode={SelectionMode.none}
-          width="800px" />
+          width="70%" />
         {isLoading && <LoaderComponent />}
       </div>
     );
   }
 
 }
+
+export default withTranslation("translation", { withRef: true })(TabularViewComponent);
