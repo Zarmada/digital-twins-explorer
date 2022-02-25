@@ -3,10 +3,13 @@
 
 @import "../../theme/theme.scss";
 
-.ms-DetailsList {
+.tabular-view {
+  .ms-DetailsList {
     overflow-x: hidden;
-}
+  }
 
-.ms-Viewport  {
+  .ms-Viewport {
     width: 90%;
+  }
+
 }

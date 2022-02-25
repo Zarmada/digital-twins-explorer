@@ -2,12 +2,11 @@
 // Licensed under the MIT license.
 
 import React, { Component } from "react";
-import { DetailsList, SelectionMode } from "@fluentui/react/lib/DetailsList";
+import { DetailsList, SelectionMode } from "office-ui-fabric-react";
 import LoaderComponent from "../LoaderComponent/LoaderComponent";
 import { withTranslation } from "react-i18next";
 
 import "./TabularViewComponent.scss";
-
 
 export class TabularViewComponent extends Component {
 
@@ -76,7 +75,7 @@ export class TabularViewComponent extends Component {
   render() {
     const { isLoading, items } = this.state;
     return (
-      <div className="ev-grid">
+      <div className="ev-grid tabular-view">
         <DetailsList
           items={items}
           columns={this.columns}
