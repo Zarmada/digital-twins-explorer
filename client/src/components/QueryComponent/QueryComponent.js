@@ -95,8 +95,9 @@ class QueryComponent extends Component {
   handleEditorChange = value => {
     const maxNumberOfRows = 20;
     const lineHeight = 19;
+    const marginHeight = 10;
     const count = Math.min(maxNumberOfRows, Math.max(0, value.split("").filter(c => c === "\n").length));
-    this.setState({ rowHeight: `${((count + 1) * lineHeight) + 10}px` });
+    this.setState({ rowHeight: `${((count + 1) * lineHeight) + marginHeight}px` });
   }
 
   handleEditorDidMount(editor, monaco) {
