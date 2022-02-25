@@ -31,7 +31,7 @@ class QueryComponent extends Component {
     this.state = {
       queries: [],
       selectedQuery: defaultQuery,
-      selectedQueryHold: defaultQuery,
+      selectedQueryWithNewlines: defaultQuery,
       selectedQueryKey: null,
       queryKeyToBeRemoved: "",
       showSaveQueryModal: false,
@@ -65,9 +65,9 @@ class QueryComponent extends Component {
     });
   }
 
-  onChange = evt => {
-    this.handleEditorChange(evt);
-    this.setState({ selectedQuery: evt, selectedQueryKey: null });
+  onChange = selectedQuery => {
+    this.handleEditorChange(selectedQuery);
+    this.setState({ selectedQuery, selectedQueryKey: null });
   }
 
   onKeyFunction = event => {
@@ -81,19 +81,22 @@ class QueryComponent extends Component {
   }
 
   onBlur = evt => {
-    this.setState({ selectedQueryHold: evt.target.value, selectedQuery: evt.target.value.replaceAll("\n", " ") });
-    this.handleEditorChange(evt.target.value.replaceAll("\n", " "));
+    const selectedQuery = evt.target.value.replaceAll("\n", " ");
+    this.setState({ selectedQueryWithNewlines: evt.target.value, selectedQuery });
+    this.handleEditorChange(selectedQuery);
   }
 
   onFocus = () => {
-    const { selectedQueryHold } = this.state;
-    this.setState({ selectedQuery: selectedQueryHold });
-    this.handleEditorChange(selectedQueryHold);
+    const { selectedQueryWithNewlines } = this.state;
+    this.setState({ selectedQuery: selectedQueryWithNewlines });
+    this.handleEditorChange(selectedQueryWithNewlines);
   }
 
   handleEditorChange = value => {
-    const count = Math.min(20, Math.max(0, value.split("").filter(c => c === "\n").length));
-    this.setState({ rowHeight: `${((count + 1) * 19) + 10}px` });
+    const maxNumberOfRows = 20;
+    const lineHeight = 19;
+    const count = Math.min(maxNumberOfRows, Math.max(0, value.split("").filter(c => c === "\n").length));
+    this.setState({ rowHeight: `${((count + 1) * lineHeight) + 10}px` });
   }
 
   handleEditorDidMount(editor, monaco) {

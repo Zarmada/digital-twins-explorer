@@ -318,8 +318,8 @@
   padding: 0px;
 }
 
-.monaco-editor-background {
-  background-color: var(--input-color)  !important;
+div.monaco-editor-background {
+  background-color: var(--input-color);
   margin-top: 5px;
 }
 
@@ -327,12 +327,12 @@
   background-color: var(--input-color);
 }
 
-.monaco-editor .margin {
-  background-color: var(--input-color) !important;
+div.monaco-editor .margin {
+  background-color: var(--input-color);
 } 
 
-.suggest-widget {
-    position: fixed !important;
+div.editor-widget .suggest-widget {
+    position: fixed;
     margin-top: 100px;
     margin-left: 220px;
     z-index: 200;
