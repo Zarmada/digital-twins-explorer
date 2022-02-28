@@ -1,8 +1,8 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { act } from "react-dom/test-utils";
+import { act, Simulate } from "react-dom/test-utils";
 import { findByText, findByLabelText, waitFor, findByTestId, fireEvent, screen } from "@testing-library/react";
-import user from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 import PubSub from "pubsub-js";
 import ModelViewerComponent from "./ModelViewerComponent";
 import { apiService } from "../../services/ApiService";
@@ -11,7 +11,6 @@ import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
 import { ModelService } from "../../services/ModelService";
 import { ConsoleComponent } from "../ConsoleComponent/ConsoleComponent";
-import userEvent from "@testing-library/user-event";
 
 jest.mock("../../services/ApiService");
 jest.mock("../../services/ConfigService");
@@ -65,15 +64,10 @@ const mockSuccesResponse = { "Status": "Success"};
 
 const uploadValue = [
   {
-    "@id": "dtmi:com:example:adtexplorer:Floor;1",
+    "@id": "dtmi:com:example:adtexplorer:FloorNew;1",
     "@type": "Interface",
     "displayName": "Floor",
     "contents": [
-      {
-        "@type": "Relationship",
-        "name": "contains",
-        "target": "dtmi:com:example:adtexplorer:Room;1"
-      },
       {
         "@type": "Property",
         "name": "AverageTemperature",
@@ -179,7 +173,7 @@ test("delete model", async () => {
   await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
 });
 
-/*test("create a twin", async () => {
+test("create a twin", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   apiService.addTwin.mockResolvedValue(mockSuccesResponse);
@@ -195,16 +189,17 @@ test("delete model", async () => {
   act(() => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
-  const input = await screen.getByTestId("twinNameInput");
-  userEvent.type(input, "TestTwin");
+  let input = await screen.findByTestId("twinNameInput");
+  input.value = "TestTwin";
+  Simulate.change(input);
   expect(input.value).toBe("TestTwin");
-  const saveButton = await screen.getByTestId("saveTwin");
-  console.log(screen.debug(null,20000));
+  const saveButton = await screen.findByTestId("saveTwin");
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  expect(ModelService.prototype.createPayload.mock.calls.length).toBe(1);
-});*/
+  await new Promise(resolve => setTimeout(resolve, 100));
+  expect(apiService.addTwin).toHaveBeenCalledTimes(1);
+});
 
 test("delete all models", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
@@ -227,11 +222,13 @@ test("delete all models", async () => {
   expect(ModelService.prototype.deleteAll.mock.calls.length).toBe(1);
 });
 
-/*test("upload model", async () => {
+test("upload model", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   apiService.addModels.mockResolvedValue(mockSuccesResponse);
-  await act(() => {
+  ModelService.prototype.getModelIdsForUpload.mockResolvedValue([ "dtmi:com:example:adtexplorer:FloorNew;1" ]);
+  ModelService.prototype.chunkModelsList.mockReturnValue([ [ "dtmi:com:example:adtexplorer:FloorNew;1" ] ]);
+  act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });
 
@@ -242,17 +239,16 @@ test("delete all models", async () => {
     button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
   const str = JSON.stringify(uploadValue);
-  const blob = new Blob([str]);
-  const file = new File([blob], "values.json", {
-    type: "application/JSON",
+  const blob = new Blob([ str ]);
+  const file = new File([ blob ], "values.json", {
+    type: "application/json"
   });
   File.prototype.text = jest.fn().mockResolvedValueOnce(str);
   const input = container.querySelectorAll(".mv-fileInput");
-  console.log(input[0]);
-  user.upload(input[0], file);
-  
+  userEvent.upload(input[0], file);
+  await new Promise(resolve => setTimeout(resolve, 100));
   expect(uploadModel).toHaveBeenCalledTimes(1);
-});*/
+});
 
 
 
@@ -278,7 +274,7 @@ test("upload model image", async () => {
   });
   File.prototype.text = jest.fn().mockResolvedValueOnce(str);
   const input = container.querySelectorAll(".mv-fileInput");
-  user.upload(input[2], file);
+  userEvent.upload(input[2], file);
   expect(retrieveModels).toHaveBeenCalledTimes(2);
 });
 
