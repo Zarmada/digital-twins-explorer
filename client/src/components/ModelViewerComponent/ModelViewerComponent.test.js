@@ -8,19 +8,23 @@ import ModelViewerComponent from "./ModelViewerComponent";
 import { apiService } from "../../services/ApiService";
 import { configService } from "../../services/ConfigService";
 import { eventService } from "../../services/EventService";
+import { settingsService } from "../../services/SettingsService";
 import { ModelService } from "../../services/ModelService";
 import { ConsoleComponent } from "../ConsoleComponent/ConsoleComponent";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../../services/ApiService");
 jest.mock("../../services/ConfigService");
 jest.mock("../../services/ModelService");
 jest.mock("../../services/EventService");
+jest.mock("../../services/SettingsService");
 
 const retrieveModels = jest.spyOn(apiService, "queryModels");
 const deleteModel = jest.spyOn(apiService, "deleteModel");
 const uploadModel = jest.spyOn(apiService, "addModels");
-const addTwin = jest.spyOn(apiService, "addTwin");
 const getModel = jest.spyOn(apiService, "getModelById");
+const getModelImage = jest.spyOn(settingsService, "getModelImage");
+const deleteModelImage = jest.spyOn(settingsService, "deleteModelImage");
 
 const models = [
   {
@@ -54,6 +58,8 @@ const models = [
     }
   }
 ];
+
+const mockGetModelImage = "\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAABiVBMVEWAgIAAAAD////AwAB9fX2epllnWahYpo6mWXkAwL++AAIAvwC/v796enpajqalcVm/AL8AAb6wsLCZmZlmZmaNjY1zc3Ourq7MzMwzMzOkpKSFhYWRkZFfX1+goKCPjwBWVlZkVapHR0eTkZmYmZHd3d0NDQ0dHR3a2tp8r566vpvJycmvfZF7gH6hm79QUFAqKiphpZuEaZePo30AwMju7u6raHdSB5+oclOjsbiGm6e3qaOfk46kvksIvV68CJQBz86njoTNAQPX13/PzwEADxABzgHOAc4PDwB6eogAABABA82YoUsEnJt0uHS4dLiBk42RjqBjwL8EmwRkwGSbBpu/Y7+/Y2OaBAWdnQRgYL+Ghnq+vmAGBpufn1m2tieQkG3Q0JSlpUOYmGOwsDu7uxiZrrm3w8ofBAVeV...";
 
 const mockSuccesResponse = { "Status": "Success"};
 
@@ -173,10 +179,11 @@ test("delete model", async () => {
   await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
 });
 
-test("create a twin", async () => {
+/*test("create a twin", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  apiService.deleteModel.mockResolvedValue(modelData);
+  apiService.addTwin.mockResolvedValue(mockSuccesResponse);
+  ModelService.prototype.createPayload.mockResolvedValue(mockSuccesResponse);
   act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
 
   await findByText(container, "Floor");
@@ -184,17 +191,20 @@ test("create a twin", async () => {
   act(() => {
     button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
-  const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.deleteModels");
+  const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.createTwin");
   act(() => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
-  const confirm = await screen.getByTestId("confirm");
+  const input = await screen.getByTestId("twinNameInput");
+  userEvent.type(input, "TestTwin");
+  expect(input.value).toBe("TestTwin");
+  const saveButton = await screen.getByTestId("saveTwin");
+  console.log(screen.debug(null,20000));
   act(() => {
-    confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  expect(deleteModel).toHaveBeenCalledTimes(1);
-  await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
-});
+  expect(ModelService.prototype.createPayload.mock.calls.length).toBe(1);
+});*/
 
 test("delete all models", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
@@ -215,4 +225,83 @@ test("delete all models", async () => {
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   expect(ModelService.prototype.deleteAll.mock.calls.length).toBe(1);
+});
+
+/*test("upload model", async () => {
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
+  apiService.queryModels.mockResolvedValue(models);
+  apiService.addModels.mockResolvedValue(mockSuccesResponse);
+  await act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
+
+  await findByText(container, "Floor");
+  const button = await findByLabelText(container, "modelViewerCommandBarComponent.farItems.uploadModel.text");
+  expect(uploadModel).toHaveBeenCalledTimes(0);
+  await act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const str = JSON.stringify(uploadValue);
+  const blob = new Blob([str]);
+  const file = new File([blob], "values.json", {
+    type: "application/JSON",
+  });
+  File.prototype.text = jest.fn().mockResolvedValueOnce(str);
+  const input = container.querySelectorAll(".mv-fileInput");
+  console.log(input[0]);
+  user.upload(input[0], file);
+  
+  expect(uploadModel).toHaveBeenCalledTimes(1);
+});*/
+
+
+
+test("upload model image", async () => {
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
+  apiService.queryModels.mockResolvedValue(models);
+  settingsService.setModelImage.mockResolvedValue(mockSuccesResponse);
+  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+
+  await findByText(container, "Floor");
+  const button = container.querySelector(".ms-CommandBar-overflowButton");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.uploadModel");
+  act(() => {
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const str = JSON.stringify(uploadValue);
+  const blob = new Blob([str]);
+  const file = new File([blob], "Floor.json", {
+    type: "application/JSON",
+  });
+  File.prototype.text = jest.fn().mockResolvedValueOnce(str);
+  const input = container.querySelectorAll(".mv-fileInput");
+  user.upload(input[2], file);
+  expect(retrieveModels).toHaveBeenCalledTimes(2);
+});
+
+test("delete model image", async () => {
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
+  apiService.queryModels.mockResolvedValue(models);
+  settingsService.getModelImage.mockResolvedValue(mockGetModelImage);
+  settingsService.deleteModelImage.mockResolvedValue(mockSuccesResponse);
+  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+
+  await findByText(container, "Floor");
+  expect(getModelImage).toHaveBeenCalledTimes(1);
+  const button = container.querySelector(".ms-CommandBar-overflowButton");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.uploadModel");
+  act(() => {
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  const deleteButton = await screen.getByTestId("deleteModelImage");
+  act(() => {
+    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  });
+  expect(retrieveModels).toHaveBeenCalledTimes(1);
 });
