@@ -548,12 +548,18 @@ export class GraphViewerCytoscapeComponent extends React.Component {
 
   setNewNodesInitialPositions() {
     const cy = this.graphControl;
+    let firstSingleNode = true;
     let initialX = 0;
     let initialY = 0;
     let leftMostX = 0;
     let topMostY = 0;
     cy.nodes().forEach(node => {
       if (node.degree() === 0) {
+        if (firstSingleNode) {
+          initialX = node.position().x;
+          initialY = node.position().y;
+          firstSingleNode = false;
+        }
         if (initialX < node.position().x) {
           initialX = node.position().x;
           initialY = node.position().y;
@@ -563,7 +569,7 @@ export class GraphViewerCytoscapeComponent extends React.Component {
         topMostY = topMostY > node.position().y ? node.position().y : topMostY;
       }
     });
-    if (initialX === 0) {
+    if (firstSingleNode) {
       this.setState({ initialX: leftMostX - 50, initialY: topMostY - 50 });
     } else {
       this.setState({ initialX: initialX + 50, initialY });

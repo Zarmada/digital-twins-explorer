@@ -91,6 +91,7 @@ class GraphViewerComponent extends React.Component {
     eventService.subscribeAddRelationship(data => data && this.onRelationshipCreate(data));
     eventService.subscribeDeleteRelationship(data => data && this.onRelationshipDelete(data));
     eventService.subscribeCreateTwin(data => {
+      this.cyRef.current.setNewNodesInitialPositions();
       this.cyRef.current.addTwins([ data ]);
       this.cyRef.current.updateNodeColors();
       this.cyRef.current.zoomToFit();
@@ -335,7 +336,6 @@ class GraphViewerComponent extends React.Component {
       });
 
       await bs.run();
-      this.cyRef.current.setNewNodesInitialPositions();
       eventService.publishGraphRelationships(this.relationships);
     }
 
@@ -496,7 +496,6 @@ class GraphViewerComponent extends React.Component {
     this.setState({ layout });
     this.cyRef.current.setLayout(layout);
     this.cyRef.current.doLayout();
-    this.cyRef.current.setNewNodesInitialPositions();
   }
 
   onTriggerHide = () => {
