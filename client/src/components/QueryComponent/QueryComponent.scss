@@ -337,3 +337,7 @@ div.suggest-widget {
     margin-left: 220px;
     z-index: 200;
 }
+
+div.monaco-editor .view-overlays .current-line {
+  border: none;
+}
