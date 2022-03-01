@@ -241,7 +241,7 @@ class QueryComponent extends Component {
                 <Checkbox label={this.props.t("queryComponent.overlayResults")} checked={isOverlayResultsChecked} onChange={this.onOverlayResultsChange}
                   boxSide="end" />
               </FocusZone>
-              <DefaultButton className="query-button" onClick={this.executeQuery} ariaLive="assertive">
+              <DefaultButton className="query-button" onClick={this.executeQuery} ariaLive="assertive" data-testid="queryButton">
                 {this.props.t("queryComponent.defaultButton")}
               </DefaultButton>
               <IconButton className="query-save-button"
