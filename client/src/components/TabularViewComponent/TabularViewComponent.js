@@ -18,6 +18,14 @@ export class TabularViewComponent extends Component {
     };
     this.columns = [
       {
+        key: "idColumn",
+        fieldName: "id",
+        name: "Relationship ID",
+        data: props.t("app.tabularViewComponentConfig.relationshipID"),
+        minWidth: 250,
+        maxWidth: 250,
+        isPadded: true
+      }, {
         key: "nameColumn",
         fieldName: "name",
         name: props.t("app.tabularViewComponentConfig.name"),
@@ -38,14 +46,6 @@ export class TabularViewComponent extends Component {
         fieldName: "target",
         name: props.t("app.tabularViewComponentConfig.target"),
         data: "string",
-        minWidth: 200,
-        maxWidth: 200,
-        isPadded: true
-      }, {
-        key: "idColumn",
-        fieldName: "id",
-        name: "Relationship ID",
-        data: props.t("app.tabularViewComponentConfig.relationshipID"),
         minWidth: 200,
         maxWidth: 200,
         isPadded: true
