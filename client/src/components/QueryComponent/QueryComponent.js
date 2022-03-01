@@ -10,6 +10,7 @@ import Editor from "@monaco-editor/react";
 import { print } from "../../services/LoggingService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
+import { dependencyProposalSegmentOne, dependencyProposalSegmentTwo, dependencyProposalSegmentThree } from "../../services/MonacoConstants";
 
 import "./QueryComponent.scss";
 import { SaveQueryDialogComponent } from "./SaveQueryDialogComponent/SaveQueryDialogComponent";
@@ -105,6 +106,21 @@ class QueryComponent extends Component {
     monaco.editor.defineTheme("vs-dark-twins", {
       base: "vs",
       inherit: true
+    });
+    const createDependencyProposals = (range, kind) => [ ...dependencyProposalSegmentOne(range, kind), ...dependencyProposalSegmentTwo(range, kind), ...dependencyProposalSegmentThree(range, kind) ];
+    monaco.languages.registerCompletionItemProvider("sql", {
+      provideCompletionItems: (model, position) => {
+        const word = model.getWordUntilPosition(position);
+        const range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn
+        };
+        return {
+          suggestions: createDependencyProposals(range, monaco.languages.CompletionItemKind.Function)
+        };
+      }
     });
   }
 

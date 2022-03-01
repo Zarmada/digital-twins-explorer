@@ -331,8 +331,8 @@ div.monaco-editor .margin {
   background-color: var(--input-color);
 } 
 
-div.editor-widget .suggest-widget {
-    position: fixed;
+div.suggest-widget {
+    position: fixed !important;
     margin-top: 100px;
     margin-left: 220px;
     z-index: 200;
