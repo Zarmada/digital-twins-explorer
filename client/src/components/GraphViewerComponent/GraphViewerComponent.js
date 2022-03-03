@@ -894,7 +894,7 @@ class GraphViewerComponent extends React.Component {
                   : <>
                     {relationshipsOnly
                       ? <><span>A graph may only be rendered if the results contain a twin. </span>
-                        <span>Click here to open the</span>
+                        <span>Click here to open the </span>
                         <a onClick={() => {
                           eventService.publishOpenTabularView(this.relationships);
                           this.setState({ couldNotDisplay: false });
