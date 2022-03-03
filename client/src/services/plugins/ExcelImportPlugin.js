@@ -10,14 +10,16 @@ const ModelColumn = "model",
   IdColumn = "id",
   RelationshipFromColumn = "relFrom",
   RelationshipTypeColumn = "relType",
-  InitialDataColumn = "initData";
+  InitialDataColumn = "initData",
+  RelationshipInitialDataColumn = "relInitData";
 
 const ColumnMapping = [
   { name: "ModelID", id: ModelColumn },
   { name: "ID (must be unique)", id: IdColumn },
   { name: "Relationship (From)", id: RelationshipFromColumn },
   { name: "Relationship Name", id: RelationshipTypeColumn },
-  { name: "Init Data", id: InitialDataColumn }
+  { name: "Init Data", id: InitialDataColumn },
+  { name: "Relationship Init Data", id: RelationshipInitialDataColumn }
 ];
 
 class StandardExcelImportFormat {
@@ -32,7 +34,9 @@ class StandardExcelImportFormat {
     const errors = [];
     for (let i = 1; i < resp.rows.length; i++) {
       const row = resp.rows[i];
-
+      if (row.length === 0) {
+        break;
+      }
       const twinId = row[headers[IdColumn]];
       if (!twinId) {
         errors.push(`Missing twin ID on row ${i}`);
@@ -55,6 +59,8 @@ class StandardExcelImportFormat {
 
         const parent = row[headers[RelationshipFromColumn]];
         const relationship = row[headers[RelationshipTypeColumn]];
+        const initRelationshipDataRaw = row[headers[RelationshipInitialDataColumn]];
+        const initRelationshipData = initRelationshipDataRaw ? JSON.parse(initRelationshipDataRaw) : {};
         if (parent) {
           const parentTwin = data.digitalTwinsGraph.digitalTwins.find(twin => twin.$dtId === twinId);
           if (!parentTwin) {
@@ -69,7 +75,8 @@ class StandardExcelImportFormat {
             $sourceId: parent,
             $targetId: twinId,
             $relationshipName: relationship,
-            $relationshipId: uuidv4()
+            $relationshipId: uuidv4(),
+            $properties: initRelationshipData
           });
         }
       } catch (error) {

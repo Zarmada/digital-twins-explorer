@@ -87,7 +87,7 @@ class ImportService {
         items: groupedRels[rel],
         action: (item, resolve, reject) => {
           print(`- Create relationship ${item.$relationshipName} from ${item.$sourceId} to ${item.$targetId}`);
-          apiService.addRelationship(item.$sourceId, item.$targetId, item.$relationshipName, item.$relationshipId)
+          apiService.addRelationship(item.$sourceId, item.$targetId, item.$relationshipName, item.$relationshipId, item.$properties)
             .then(resolve, e => {
               print(`*** Error in creating relationship: ${e}`, "error");
               results.relationships.push(item);
