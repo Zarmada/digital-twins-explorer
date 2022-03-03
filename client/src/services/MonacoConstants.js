@@ -265,5 +265,19 @@ export const dependencyProposalSegmentThree = (range, kind) =>
       insertText: "IS_OF_MODEL",
       kind,
       range
+    },
+    {
+      label: "MATCH",
+      documentation: "MATCH",
+      insertText: "MATCH",
+      kind,
+      range
+    },
+    {
+      label: "JOIN",
+      documentation: "JOIN",
+      insertText: "JOIN",
+      kind,
+      range
     }
   ];
