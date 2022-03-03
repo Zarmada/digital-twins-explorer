@@ -29,13 +29,12 @@ class StandardExcelImportFormat {
     if (!headers) {
       return null;
     }
-
     const data = new DataModel();
     const errors = [];
     for (let i = 1; i < resp.rows.length; i++) {
       const row = resp.rows[i];
       if (row.length === 0) {
-        break;
+        continue;
       }
       const twinId = row[headers[IdColumn]];
       if (!twinId) {
@@ -101,7 +100,7 @@ class StandardExcelImportFormat {
       return p;
     }, {});
 
-    return Object.keys(mapping).length === ColumnMapping.length ? mapping : null;
+    return mapping;
   }
 
 }

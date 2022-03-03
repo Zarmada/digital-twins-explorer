@@ -164,7 +164,7 @@ class ApiService {
     await this.initialize();
 
     return await this.client.upsertRelationship(sourceId, relationshipId,
-      { $relationshipName: relationshipType, $targetId: targetId, ...properties });
+      { ...properties, $relationshipName: relationshipType, $targetId: targetId });
   }
 
   async queryModels() {
