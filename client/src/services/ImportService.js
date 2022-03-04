@@ -103,7 +103,7 @@ class ImportService {
       const joiner = results.twins.length > 0 && results.relationships.length > 0 ? " and " : "";
       const rels = results.relationships.length > 0
         ? `relationships ${results.relationships.map(x =>
-          `${x.$sourceId} ${x.$relationship} ${x.$targetId} ${x.$errorMessage}`).join(", ")}`
+          `${x.$sourceId} ${x.$targetId} \n${x.$errorMessage}`).join(", ")}`
         : "";
       const msg = `Failed to create ${twins}${joiner}${rels}`;
       throw new Error(msg);
