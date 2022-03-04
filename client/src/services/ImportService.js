@@ -90,7 +90,7 @@ class ImportService {
           apiService.addRelationship(item.$sourceId, item.$targetId, item.$relationshipName, item.$relationshipId, item.$properties)
             .then(resolve, e => {
               print(`*** Error in creating relationship: ${e}`, "error");
-              results.relationships.push(item);
+              results.relationships.push({ ...item, $errorMessage: e.details.error.details[0].message});
               reject(e);
             });
         }
@@ -103,7 +103,7 @@ class ImportService {
       const joiner = results.twins.length > 0 && results.relationships.length > 0 ? " and " : "";
       const rels = results.relationships.length > 0
         ? `relationships ${results.relationships.map(x =>
-          `${x.$sourceId} ${x.$relationship} ${x.$targetId}`).join(", ")}`
+          `${x.$sourceId} ${x.$relationship} ${x.$targetId} ${x.$errorMessage}`).join(", ")}`
         : "";
       const msg = `Failed to create ${twins}${joiner}${rels}`;
       throw new Error(msg);
