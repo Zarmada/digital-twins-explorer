@@ -90,7 +90,7 @@ class ImportService {
           apiService.addRelationship(item.$sourceId, item.$targetId, item.$relationshipName, item.$relationshipId, item.$properties)
             .then(resolve, e => {
               print(`*** Error in creating relationship: ${e}`, "error");
-              results.relationships.push({ ...item, $errorMessage: e.details.error.details[0].message});
+              results.relationships.push({ ...item, $errorMessage: e.details.error.details ? e.details.error.details[0].message : e.details.error.message });
               reject(e);
             });
         }
