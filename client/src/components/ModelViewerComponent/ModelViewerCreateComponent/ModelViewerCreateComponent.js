@@ -85,7 +85,7 @@ export class ModelViewerCreateComponent extends Component {
               value={name} onChange={this.onNameChange} autoFocus ariaLabel={this.props.t("modelViewerCreateComponent.heading")}
               data-testid="twinNameInput" />
             <div className="btn-group">
-              <PrimaryButton type="submit" className="modal-button save-button" onClick={this.save}
+              <PrimaryButton type="submit" className="modal-button save-button"
                 data-testid="saveTwin">{this.props.t("modelViewerCreateComponent.saveButton")}</PrimaryButton>
               <DefaultButton className="modal-button cancel-button" onClick={this.cancel}>{this.props.t("modelViewerCreateComponent.cancelButton")}</DefaultButton>
             </div>

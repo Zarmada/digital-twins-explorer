@@ -11,6 +11,10 @@ import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
 import { ModelService } from "../../services/ModelService";
 import { ConsoleComponent } from "../ConsoleComponent/ConsoleComponent";
+import initIcons from "../../services/IconService/IconService";
+
+initIcons();
+
 
 jest.mock("../../services/ApiService");
 jest.mock("../../services/ConfigService");
@@ -235,7 +239,7 @@ test("upload model", async () => {
   await findByText(container, "Floor");
   const button = await findByLabelText(container, "modelViewerCommandBarComponent.farItems.uploadModel.text");
   expect(uploadModel).toHaveBeenCalledTimes(0);
-  await act(() => {
+  act(() => {
     button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
   });
   const str = JSON.stringify(uploadValue);
