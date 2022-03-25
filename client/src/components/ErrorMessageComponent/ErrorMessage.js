@@ -92,7 +92,7 @@ export class ErrorMessageComponent extends Component {
   }
 
   render() {
-    const { showModal, errorMessage, stackErrorMessage, showFixAuth, showAuthSpinner, showAuthStatus, showAuthResponse, appAdtChinaUrl} = this.state;
+    const { showModal, errorMessage, stackErrorMessage, showFixAuth, showAuthSpinner, showAuthStatus, showAuthResponse, appAdtChinaUrl } = this.state;
     let authComponent = "";
     if (showFixAuth) {
       authComponent = <DefaultButton className="modal-button close-button" onClick={this.fixPermissions} style={{width: 150}}>Assign yourself data reader access</DefaultButton>;
