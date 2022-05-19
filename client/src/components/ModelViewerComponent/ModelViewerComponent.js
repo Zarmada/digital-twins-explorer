@@ -146,6 +146,7 @@ class ModelViewerComponent extends Component {
       for (const file of files) {
         if (file.type === "application/json") {
           print(`- working on ${file.name}`);
+          debugger;//eslint-disable-line
           const dtdl = await readFile(file);
           if (dtdl.length) {
             dtdl.forEach(model => list.push(model));

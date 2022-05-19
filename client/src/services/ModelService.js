@@ -70,6 +70,7 @@ export class ModelService {
   }
 
   async initialize() {
+    debugger;//eslint-disable-line
     if (!this.modelGraph) {
       const models = await apiService.queryModels();
       this.modelGraph = new JsonldGraph([

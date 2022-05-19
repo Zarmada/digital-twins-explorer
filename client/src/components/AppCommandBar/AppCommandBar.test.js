@@ -1,14 +1,12 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { act, Simulate } from "react-dom/test-utils";
-import { findByText, findByLabelText, waitFor, findByTestId, fireEvent, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { act } from "react-dom/test-utils";
+import { screen } from "@testing-library/react";
 import PubSub from "pubsub-js";
 import AppCommandBar from "./AppCommandBar";
 
 import { configService } from "../../services/ConfigService";
 import { apiService } from "../../services/ApiService";
-import { eventService } from "../../services/EventService";
 
 import initIcons from "../../services/IconService/IconService";
 
@@ -22,27 +20,19 @@ const getAllTwins = jest.spyOn(apiService, "getAllTwins");
 const setConfig = jest.spyOn(configService, "setConfig");
 
 
-
 const mockSuccesResponse = { "Status": "Success"};
 
-const optionalComponentsState = [{
-    id: "console",
-    name: "Console",
-    show: false,
-    showProp: "showConsole"
-  },{
-    id: "output",
-    name: "Output",
-    show: false,
-    showProp: "showOutput"
-  }
-];
-
-let toggleCounter = 0;
-
-const toggleOptionalComponent = () => {
-  toggleCounter++;
-};
+const optionalComponentsState = [ {
+  id: "console",
+  name: "Console",
+  show: false,
+  showProp: "showConsole"
+}, {
+  id: "output",
+  name: "Output",
+  show: false,
+  showProp: "showOutput"
+} ];
 
 let container = null;
 beforeEach(() => {
@@ -59,113 +49,96 @@ afterEach(() => {
 
 
 test("delete all twins component", async () => {
-    // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
-    configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-    apiService.getAllTwins.mockResolvedValue(mockSuccesResponse);
+  // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
 
-    act(() => {render(<AppCommandBar optionalComponents={optionalComponentsState}
-        optionalComponentsState={optionalComponentsState}/>, container);});
-    
-    const button = container.querySelector(".delete-button");
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
-
-    const deleteButton = await screen.findByTestId("deleteTwins");
-
-    act(() => {
-      deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
-
-    expect(getAllTwins).toHaveBeenCalledTimes(1);
-
+  act(() => {
+    render(<AppCommandBar optionalComponentsState={optionalComponentsState} />, container);
   });
 
-  test("switch environment", async () => {
-    // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
-    configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-    configService.setConfig.mockResolvedValue(mockSuccesResponse);
-
-    act(() => {render(<AppCommandBar optionalComponents={optionalComponentsState}
-        optionalComponentsState={optionalComponentsState}/>, container);});
-    
-    const button = container.querySelector(".sign-in");
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    });
-
-    let input = await screen.findByTestId("urlInput");
-    input.value = "https://test.api.scus.digitaltwins.azure.net";
-    Simulate.change(input);
-    expect(input.value).toBe("https://test.api.scus.digitaltwins.azure.net");
-    const saveButton = await screen.findByTestId("saveConfiguration");
-    act(() => {
-      saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    });
-
-    expect(setConfig).toHaveBeenCalledTimes(1);
-    await waitFor(() => expect(eventService.publishEnvironmentChange).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(eventService.publishConfigure).toHaveBeenCalledTimes(1));
-    
+  const button = container.querySelector(".delete-button");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
 
-  test("switch console", async () => {
-    // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
-    configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-    configService.setConfig.mockResolvedValue(mockSuccesResponse);
+  const deleteButton = await screen.findByTestId("deleteTwins");
 
-    act(() => {render(<AppCommandBar optionalComponents={optionalComponentsState}
-        optionalComponentsState={optionalComponentsState}
-        toggleOptionalComponent={toggleOptionalComponent}/>, container);});
-    
-    const button = container.querySelector(".settings-button");
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    });
-
-    const consoleButton = await screen.findByTestId("showConsoleField");
-
-    act(() => {
-      consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
-
-    expect(toggleCounter).toBe(1);
-
-    act(() => {
-      consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
-
-    expect(toggleCounter).toBe(2);
-
+  act(() => {
+    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
 
-  
-  test("switch output", async () => {
-    // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
-    configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-    configService.setConfig.mockResolvedValue(mockSuccesResponse);
+  expect(getAllTwins).toHaveBeenCalledTimes(1);
+});
 
-    act(() => {render(<AppCommandBar optionalComponents={optionalComponentsState}
-        optionalComponentsState={optionalComponentsState}
-        toggleOptionalComponent={toggleOptionalComponent}/>, container);});
-    
-    const button = container.querySelector(".settings-button");
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    });
+test("switch console", async () => {
+  // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
 
-    const consoleButton = await screen.findByTestId("showOutputField");
+  let toggleCounter = 0;
 
-    act(() => {
-      consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
+  const toggleOptionalComponent = id => {
+    expect(id).toBe("console");
+    toggleCounter++;
+  };
 
-    expect(toggleCounter).toBe(3);
-
-    act(() => {
-      consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
-    });
-
-    expect(toggleCounter).toBe(4);
-
+  act(() => {
+    render(<AppCommandBar optionalComponentsState={optionalComponentsState}
+      toggleOptionalComponent={toggleOptionalComponent} />, container);
   });
+
+  const button = container.querySelector(".settings-button");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  const consoleButton = await screen.findByTestId("showConsoleField");
+
+  act(() => {
+    consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  expect(toggleCounter).toBe(1);
+
+  act(() => {
+    consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  expect(toggleCounter).toBe(2);
+});
+
+
+test("switch output", async () => {
+  // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
+  configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
+
+  let toggleCounter = 0;
+
+  const toggleOptionalComponent = id => {
+    expect(id).toBe("output");
+    toggleCounter++;
+  };
+
+  act(() => {
+    render(<AppCommandBar optionalComponentsState={optionalComponentsState}
+      toggleOptionalComponent={toggleOptionalComponent} />, container);
+  });
+
+  const button = container.querySelector(".settings-button");
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  const consoleButton = await screen.findByTestId("showOutputField");
+
+  act(() => {
+    consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  expect(toggleCounter).toBe(1);
+
+  act(() => {
+    consoleButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+
+  expect(toggleCounter).toBe(2);
+});

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act, Simulate } from "react-dom/test-utils";
-import { findByText, findByLabelText, waitFor, findByTestId, fireEvent, screen } from "@testing-library/react";
+import { findByText, findByLabelText, waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PubSub from "pubsub-js";
 import ModelViewerComponent from "./ModelViewerComponent";
@@ -10,7 +10,6 @@ import { configService } from "../../services/ConfigService";
 import { eventService } from "../../services/EventService";
 import { settingsService } from "../../services/SettingsService";
 import { ModelService } from "../../services/ModelService";
-import { ConsoleComponent } from "../ConsoleComponent/ConsoleComponent";
 import initIcons from "../../services/IconService/IconService";
 
 initIcons();
@@ -27,7 +26,6 @@ const deleteModel = jest.spyOn(apiService, "deleteModel");
 const uploadModel = jest.spyOn(apiService, "addModels");
 const getModel = jest.spyOn(apiService, "getModelById");
 const getModelImage = jest.spyOn(settingsService, "getModelImage");
-const deleteModelImage = jest.spyOn(settingsService, "deleteModelImage");
 
 const models = [
   {
@@ -47,15 +45,15 @@ const models = [
       "displayName": "Floor",
       "contents": [
         {
-            "@type": "Relationship",
-            "name": "contains",
-            "target": "dtmi:com:example:adtexplorer:Room;1"
+          "@type": "Relationship",
+          "name": "contains",
+          "target": "dtmi:com:example:adtexplorer:Room;1"
         },
         {
-            "@type": "Property",
-            "name": "AverageTemperature",
-            "schema": "double",
-            "writable": true
+          "@type": "Property",
+          "name": "AverageTemperature",
+          "schema": "double",
+          "writable": true
         }
       ]
     }
@@ -85,27 +83,27 @@ const uploadValue = [
 
 const modelData = {
   "model": {
-      "@id": "dtmi:com:example:adtexplorer:Floor;1",
-      "@type": "Interface",
-      "displayName": "Floor",
-      "contents": [
-          {
-              "@type": "Relationship",
-              "name": "contains",
-              "target": "dtmi:com:example:adtexplorer:Room;1"
-          },
-          {
-              "@type": "Property",
-              "name": "AverageTemperature",
-              "schema": "double",
-              "writable": true
-          }
-      ],
-      "@context": [
-          "dtmi:dtdl:context;2"
-      ]
+    "@id": "dtmi:com:example:adtexplorer:Floor;1",
+    "@type": "Interface",
+    "displayName": "Floor",
+    "contents": [
+      {
+        "@type": "Relationship",
+        "name": "contains",
+        "target": "dtmi:com:example:adtexplorer:Room;1"
+      },
+      {
+        "@type": "Property",
+        "name": "AverageTemperature",
+        "schema": "double",
+        "writable": true
+      }
+    ],
+    "@context": [
+      "dtmi:dtdl:context;2"
+    ]
   }
-}
+};
 
 
 let container = null;
@@ -121,13 +119,13 @@ afterEach(() => {
   container = null;
 });
 
-// console.log(screen.debug(null,20000));
-
 test("renders model List", async () => {
   // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const nodeList = container.querySelectorAll(".mv_listItem");
@@ -139,16 +137,19 @@ test("renders model Information", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   apiService.getModelById.mockResolvedValue(modelData);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const button = container.querySelector(".ms-CommandBar-overflowButton");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.viewModel");
+  expect(getModel).toHaveBeenCalledTimes(0);
   act(() => {
-    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   await screen.findByText("modelViewerViewComponent.defaultButton");
   expect(getModel).toHaveBeenCalledTimes(1);
@@ -158,20 +159,22 @@ test("delete model", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   apiService.deleteModel.mockResolvedValue(modelData);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const button = container.querySelector(".ms-CommandBar-overflowButton");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.deleteModels");
   act(() => {
-    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const confirm = await screen.getByTestId("confirm");
   act(() => {
-    confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    confirm.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   expect(deleteModel).toHaveBeenCalledTimes(1);
   await waitFor(() => expect(eventService.publishDeleteModel).toHaveBeenCalledTimes(1));
@@ -182,18 +185,20 @@ test("create a twin", async () => {
   apiService.queryModels.mockResolvedValue(models);
   apiService.addTwin.mockResolvedValue(mockSuccesResponse);
   ModelService.prototype.createPayload.mockResolvedValue(mockSuccesResponse);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const button = container.querySelector(".ms-CommandBar-overflowButton");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.createTwin");
   act(() => {
-    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  let input = await screen.findByTestId("twinNameInput");
+  const input = await screen.findByTestId("twinNameInput");
   input.value = "TestTwin";
   Simulate.change(input);
   expect(input.value).toBe("TestTwin");
@@ -240,7 +245,7 @@ test("upload model", async () => {
   const button = await findByLabelText(container, "modelViewerCommandBarComponent.farItems.uploadModel.text");
   expect(uploadModel).toHaveBeenCalledTimes(0);
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const str = JSON.stringify(uploadValue);
   const blob = new Blob([ str ]);
@@ -255,26 +260,27 @@ test("upload model", async () => {
 });
 
 
-
 test("upload model image", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   settingsService.setModelImage.mockResolvedValue(mockSuccesResponse);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   const button = container.querySelector(".ms-CommandBar-overflowButton");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.uploadModel");
   act(() => {
-    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const str = JSON.stringify(uploadValue);
-  const blob = new Blob([str]);
-  const file = new File([blob], "Floor.json", {
-    type: "application/JSON",
+  const blob = new Blob([ str ]);
+  const file = new File([ blob ], "Floor.json", {
+    type: "application/JSON"
   });
   File.prototype.text = jest.fn().mockResolvedValueOnce(str);
   const input = container.querySelectorAll(".mv-fileInput");
@@ -287,21 +293,23 @@ test("delete model image", async () => {
   apiService.queryModels.mockResolvedValue(models);
   settingsService.getModelImage.mockResolvedValue(mockGetModelImage);
   settingsService.deleteModelImage.mockResolvedValue(mockSuccesResponse);
-  act(() => {render(<ModelViewerComponent showItemMenu="true" />, container);});
+  act(() => {
+    render(<ModelViewerComponent showItemMenu="true" />, container);
+  });
 
   await findByText(container, "Floor");
   expect(getModelImage).toHaveBeenCalledTimes(1);
   const button = container.querySelector(".ms-CommandBar-overflowButton");
   act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const options = await screen.findByLabelText("modelViewerItemCommandBarComponent.farItems.uploadModel");
   act(() => {
-    options.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const deleteButton = await screen.getByTestId("deleteModelImage");
   act(() => {
-    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   expect(retrieveModels).toHaveBeenCalledTimes(1);
 });
