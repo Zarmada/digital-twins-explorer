@@ -26,6 +26,7 @@ const deleteModel = jest.spyOn(apiService, "deleteModel");
 const uploadModel = jest.spyOn(apiService, "addModels");
 const getModel = jest.spyOn(apiService, "getModelById");
 const getModelImage = jest.spyOn(settingsService, "getModelImage");
+const deleteImage = jest.spyOn(settingsService, "deleteModelImage");
 
 const models = [
   {
@@ -280,12 +281,11 @@ test("upload model image", async () => {
   act(() => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  const str = JSON.stringify(uploadValue);
-  const blob = new Blob([ str ]);
+  const blob = new Blob([ mockGetModelImage ]);
   const file = new File([ blob ], "Floor.json", {
     type: "application/JSON"
   });
-  File.prototype.text = jest.fn().mockResolvedValueOnce(str);
+  File.prototype.text = jest.fn().mockResolvedValueOnce(mockGetModelImage);
   const input = container.querySelectorAll(".mv-fileInput");
   userEvent.upload(input[2], file);
   expect(retrieveModels).toHaveBeenCalledTimes(2);
@@ -314,5 +314,5 @@ test("delete model image", async () => {
   act(() => {
     deleteButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  expect(retrieveModels).toHaveBeenCalledTimes(1);
+  expect(deleteImage).toHaveBeenCalledTimes(1);
 });
