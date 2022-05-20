@@ -63,7 +63,7 @@ const models = [
 
 const mockGetModelImage = "\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAABiVBMVEWAgIAAAAD////AwAB9fX2epllnWahYpo6mWXkAwL++AAIAvwC/v796enpajqalcVm/AL8AAb6wsLCZmZlmZmaNjY1zc3Ourq7MzMwzMzOkpKSFhYWRkZFfX1+goKCPjwBWVlZkVapHR0eTkZmYmZHd3d0NDQ0dHR3a2tp8r566vpvJycmvfZF7gH6hm79QUFAqKiphpZuEaZePo30AwMju7u6raHdSB5+oclOjsbiGm6e3qaOfk46kvksIvV68CJQBz86njoTNAQPX13/PzwEADxABzgHOAc4PDwB6eogAABABA82YoUsEnJt0uHS4dLiBk42RjqBjwL8EmwRkwGSbBpu/Y7+/Y2OaBAWdnQRgYL+Ghnq+vmAGBpufn1m2tieQkG3Q0JSlpUOYmGOwsDu7uxiZrrm3w8ofBAVeV...";
 
-const mockSuccesResponse = { "Status": "Success"};
+const mockSuccessResponse = { "Status": "Success" };
 
 const uploadValue = [
   {
@@ -190,8 +190,8 @@ test("delete model", async () => {
 test("create a twin", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  apiService.addTwin.mockResolvedValue(mockSuccesResponse);
-  ModelService.prototype.createPayload.mockResolvedValue(mockSuccesResponse);
+  apiService.addTwin.mockResolvedValue(mockSuccessResponse);
+  ModelService.prototype.createPayload.mockResolvedValue(mockSuccessResponse);
   act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });
@@ -217,7 +217,7 @@ test("create a twin", async () => {
 test("delete all models", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  ModelService.prototype.deleteAll.mockResolvedValue(mockSuccesResponse);
+  ModelService.prototype.deleteAll.mockResolvedValue(mockSuccessResponse);
   act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });
@@ -238,7 +238,7 @@ test("delete all models", async () => {
 test("upload model", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  apiService.addModels.mockResolvedValue(mockSuccesResponse);
+  apiService.addModels.mockResolvedValue(mockSuccessResponse);
   ModelService.prototype.getModelIdsForUpload.mockResolvedValue([ "dtmi:com:example:adtexplorer:FloorNew;1" ]);
   ModelService.prototype.chunkModelsList.mockReturnValue([ [ "dtmi:com:example:adtexplorer:FloorNew;1" ] ]);
   act(() => {
@@ -267,7 +267,7 @@ test("upload model", async () => {
 test("upload model image", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  settingsService.setModelImage.mockResolvedValue(mockSuccesResponse);
+  settingsService.setModelImage.mockResolvedValue(mockSuccessResponse);
   act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });
@@ -295,7 +295,7 @@ test("delete model image", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
   settingsService.getModelImage.mockResolvedValue(mockGetModelImage);
-  settingsService.deleteModelImage.mockResolvedValue(mockSuccesResponse);
+  settingsService.deleteModelImage.mockResolvedValue(mockSuccessResponse);
   act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });

@@ -19,9 +19,6 @@ jest.mock("../../services/EventService");
 const getAllTwins = jest.spyOn(apiService, "getAllTwins");
 const setConfig = jest.spyOn(configService, "setConfig");
 
-
-const mockSuccesResponse = { "Status": "Success"};
-
 const optionalComponentsState = [ {
   id: "console",
   name: "Console",

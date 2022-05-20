@@ -18,7 +18,7 @@ jest.mock("../../services/ConfigService");
 jest.mock("../../services/EventService");
 jest.mock("../../services/ApiService");
 
-const mockSuccesResponse = { "Status": "Success"};
+const mockSuccessResponse = { "Status": "Success" };
 
 const twinSelection = {
   selection: {
@@ -46,9 +46,8 @@ afterEach(() => {
 
 
 test("render component", async () => {
-  // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-  apiService.queryModels.mockResolvedValue(mockSuccesResponse);
+  apiService.queryModels.mockResolvedValue(mockSuccessResponse);
 
   act(() => {
     render(<PropertyInspectorComponent isOpen />, container);
