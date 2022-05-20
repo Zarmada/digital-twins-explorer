@@ -165,7 +165,6 @@ test("renders model Information", async () => {
 test("delete model", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   apiService.queryModels.mockResolvedValue(models);
-  apiService.deleteModel.mockResolvedValue(modelData);
   act(() => {
     render(<ModelViewerComponent showItemMenu="true" />, container);
   });
@@ -210,8 +209,9 @@ test("create a twin", async () => {
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  await new Promise(resolve => setTimeout(resolve, 100));
-  expect(apiService.addTwin).toHaveBeenCalledTimes(1);
+  await waitFor(() => {
+    expect(apiService.addTwin).toHaveBeenCalledTimes(1);
+  });
 });
 
 test("delete all models", async () => {
@@ -259,8 +259,9 @@ test("upload model", async () => {
   File.prototype.text = jest.fn().mockResolvedValueOnce(str);
   const input = container.querySelectorAll(".mv-fileInput");
   userEvent.upload(input[0], file);
-  await new Promise(resolve => setTimeout(resolve, 100));
-  expect(uploadModel).toHaveBeenCalledTimes(1);
+  await waitFor(() => {
+    expect(uploadModel).toHaveBeenCalledTimes(1);
+  });
 });
 
 
@@ -282,12 +283,12 @@ test("upload model image", async () => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   const blob = new Blob([ mockGetModelImage ]);
-  const file = new File([ blob ], "Floor.json", {
-    type: "application/JSON"
+  const file = new File([ blob ], "Floor.png", {
+    type: "image/png"
   });
   File.prototype.text = jest.fn().mockResolvedValueOnce(mockGetModelImage);
   const input = container.querySelectorAll(".mv-fileInput");
-  userEvent.upload(input[2], file);
+  userEvent.upload(input[0], file);
   expect(retrieveModels).toHaveBeenCalledTimes(2);
 });
 
