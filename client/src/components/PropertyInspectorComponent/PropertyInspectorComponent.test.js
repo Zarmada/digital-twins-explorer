@@ -56,6 +56,5 @@ test("render component", async () => {
 
   eventService.publishSelection(twinSelection);
 
-  await waitFor(() => expect(eventService.publishSelection).toHaveBeenCalledTimes(1));
   await waitFor(() => expect(eventService.subscribeSelection).toHaveBeenCalledTimes(2));
 });

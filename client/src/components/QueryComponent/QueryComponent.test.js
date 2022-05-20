@@ -28,6 +28,12 @@ afterEach(() => {
   container = null;
 });
 
+const inputChange = async (inputName, inputValue) => {
+  const input = await screen.findByTestId(inputName);
+  input.value = inputValue;
+  Simulate.change(input);
+};
+
 test("load saved query", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
   settingsService.queries = mockQueriesResponse;
@@ -74,10 +80,7 @@ test("save query", async () => {
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-
-  const input = await screen.findByTestId("queryNameField");
-  input.value = "TestQuery";
-  Simulate.change(input);
+  inputChange("queryNameField","TestQuery");
   saveButton = await screen.findByTestId("saveQuery");
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));

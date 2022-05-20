@@ -119,6 +119,12 @@ afterEach(() => {
   container = null;
 });
 
+const inputChange = async (inputName, inputValue) => {
+  const input = await screen.findByTestId(inputName);
+  input.value = inputValue;
+  Simulate.change(input);
+};
+
 test("renders model List", async () => {
   // The <ModelViewerComponent /> component calls the config service and won't call the API unless the appAdtUrl is set
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
@@ -198,10 +204,7 @@ test("create a twin", async () => {
   act(() => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  const input = await screen.findByTestId("twinNameInput");
-  input.value = "TestTwin";
-  Simulate.change(input);
-  expect(input.value).toBe("TestTwin");
+  inputChange("twinNameInput","TestTwin");
   const saveButton = await screen.findByTestId("saveTwin");
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));

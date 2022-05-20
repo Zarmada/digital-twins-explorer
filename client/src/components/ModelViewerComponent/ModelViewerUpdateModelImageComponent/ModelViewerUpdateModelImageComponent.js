@@ -52,7 +52,7 @@ export class ModelViewerUpdateModelImageComponent extends Component {
         <div className="btn-group">
           <DefaultButton className="modal-button confirm-button" onClick={this.update} data-testid="updateModelImage">Replace</DefaultButton>
           <DefaultButton className="modal-button confirm-button" onClick={this.delete} data-testid="deleteModelImage">Delete</DefaultButton>
-          <DefaultButton className="modal-button cancel-button" onClick={this.cancel} ata-testid="cancel">Cancel</DefaultButton>
+          <DefaultButton className="modal-button cancel-button" onClick={this.cancel} data-testid="cancel">Cancel</DefaultButton>
         </div>
       </ModalComponent>
     );
