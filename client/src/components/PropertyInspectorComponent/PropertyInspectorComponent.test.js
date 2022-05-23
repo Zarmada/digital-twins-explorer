@@ -1,8 +1,7 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
-import { screen } from "@testing-library/react";
-import { waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import PubSub from "pubsub-js";
 import PropertyInspectorComponent from "./PropertyInspectorComponent";
 
@@ -17,8 +16,6 @@ initIcons();
 
 jest.mock("../../services/ConfigService");
 jest.mock("../../services/ApiService");
-
-const mockSuccessResponse = { "Status": "Success" };
 
 const twinSelection = {
     "$dtId": "Floor02",
@@ -48,16 +45,19 @@ afterEach(() => {
 
 test("render component", async () => {
   configService.getConfig.mockResolvedValue({ appAdtUrl: "https://foo" });
-  apiService.queryModels.mockResolvedValue(mockSuccessResponse);
+  apiService.queryModels.mockResolvedValue([ twinSelection ]);
 
   act(() => {
     render(<PropertyInspectorComponent isOpen />, container);
   });
 
-  act(() => {
-    eventService.publishSelection(twinSelection, "twin");
+  expect(apiService.queryModels).toHaveBeenCalledTimes(0);
+
+  await act(async () => {
+    eventService.publishSelection({ selection: twinSelection, selectionType: "twin" });
+    await waitFor(() => screen.findByText("TWIN PROPERTIES"));
   });
 
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  console.log(screen.debug(null,20000));
+  expect(apiService.queryModels).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText("Floor02")).not.toBeNull();
 });
