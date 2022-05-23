@@ -54,8 +54,8 @@ test("render component", async () => {
     render(<PropertyInspectorComponent isOpen />, container);
   });
 
-  act(()=> {
-    eventService.publishSelection(twinSelection,"twin");
+  act(() => {
+    eventService.publishSelection(twinSelection, "twin");
   });
 
   await new Promise(resolve => setTimeout(resolve, 2000));
