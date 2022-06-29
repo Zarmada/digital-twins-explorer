@@ -61,7 +61,7 @@ const models = [
   }
 ];
 
-const mockGetModelImage = "\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAABiVBMVEWAgIAAAAD////AwAB9fX2epllnWahYpo6mWXkAwL++AAIAvwC/v796enpajqalcVm/AL8AAb6wsLCZmZlmZmaNjY1zc3Ourq7MzMwzMzOkpKSFhYWRkZFfX1+goKCPjwBWVlZkVapHR0eTkZmYmZHd3d0NDQ0dHR3a2tp8r566vpvJycmvfZF7gH6hm79QUFAqKiphpZuEaZePo30AwMju7u6raHdSB5+oclOjsbiGm6e3qaOfk46kvksIvV68CJQBz86njoTNAQPX13/PzwEADxABzgHOAc4PDwB6eogAABABA82YoUsEnJt0uHS4dLiBk42RjqBjwL8EmwRkwGSbBpu/Y7+/Y2OaBAWdnQRgYL+Ghnq+vmAGBpufn1m2tieQkG3Q0JSlpUOYmGOwsDu7uxiZrrm3w8ofBAVeV...";
+const mockGetModelImage = "\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAABiVBMVEWAgIAAAAD////AwAB9fX2epllnWahYpo6mWXkAwL++AAIAvwC/v796enpajqalcVm/AL8AAb6wsLCZmZlmZmaNjY1zc3Ourq7MzMwzMzOkpKSFhYWRkZFfX1+goKCPjwBWVlZkVapHR0eTkZmYmZHd3d0NDQ0dHR3a2tp8r566vpvJycmvfZF7gH6hm79QUFAqKiphpZuEaZePo30AwMju7u6raHdSB5+oclOjsbiGm6e3qaOfk46kvksIvV68CJQBz86njoTNAQPX13/PzwEADxABzgHOAc4PDwB6eogAABABA82YoUsEnJt0uHS4dLiBk42RjqBjwL8EmwRkwGSbBpu/Y7+/Y2OaBAWdnQRgYL+Ghnq+vmAGBpufn1m2tieQkG3Q0JSlpUOYmGOwsDu7uxiZrrm3w8ofBAVeV..."; //eslint-disable-line
 
 const mockSuccessResponse = { "Status": "Success" };
 
