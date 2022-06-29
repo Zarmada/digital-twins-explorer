@@ -80,7 +80,7 @@ test("save query", async () => {
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  inputChange("queryNameField","TestQuery");
+  inputChange("queryNameField", "TestQuery");
   saveButton = await screen.findByTestId("saveQuery");
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));

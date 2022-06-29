@@ -204,7 +204,7 @@ test("create a twin", async () => {
   act(() => {
     options.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  inputChange("twinNameInput","TestTwin");
+  inputChange("twinNameInput", "TestTwin");
   const saveButton = await screen.findByTestId("saveTwin");
   act(() => {
     saveButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));

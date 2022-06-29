@@ -18,15 +18,15 @@ jest.mock("../../services/ConfigService");
 jest.mock("../../services/ApiService");
 
 const twinSelection = {
-    "$dtId": "Floor02",
-    "$etag": "W/\"1608a49d-ed5f-4757-9c89-d37d51c8a8b0\"",
-    "AverageTemperature": 0,
-    "$metadata": {
-        "$model": "dtmi:com:example:adtexplorer:Floor;1",
-        "AverageTemperature": {
-            "lastUpdateTime": "2022-03-08T00:43:20.5332261Z"
-        }
+  "$dtId": "Floor02",
+  "$etag": "W/\"1608a49d-ed5f-4757-9c89-d37d51c8a8b0\"",
+  "AverageTemperature": 0,
+  "$metadata": {
+    "$model": "dtmi:com:example:adtexplorer:Floor;1",
+    "AverageTemperature": {
+      "lastUpdateTime": "2022-03-08T00:43:20.5332261Z"
     }
+  }
 };
 
 let container = null;
